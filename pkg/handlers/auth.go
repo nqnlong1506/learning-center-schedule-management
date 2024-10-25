@@ -40,4 +40,5 @@ func Register(c *gin.Context) {
 	}
 
 	utils.ResponseAPI(c, config.HTTP_Status_OK, body, "Registers sucessfully.")
+	return
 }
