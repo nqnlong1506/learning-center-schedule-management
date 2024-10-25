@@ -11,7 +11,7 @@ func SetupUserRoutes(rg *gin.RouterGroup) {
 		c.JSON(http.StatusOK, gin.H{"message": "All users"})
 	})
 
-	rg.GET("/:id", func(c *gin.Context) {
+	rg.GET("/:id/view", func(c *gin.Context) {
 		id := c.Param("id")
 		c.JSON(http.StatusOK, gin.H{"user": id})
 	})
