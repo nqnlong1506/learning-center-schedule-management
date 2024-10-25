@@ -4,18 +4,28 @@ import (
 	"fmt"
 	database "learning-center-schedule-management/pkg/database/postgre"
 	"learning-center-schedule-management/pkg/handlers"
+	repo "learning-center-schedule-management/pkg/repositories"
 	"learning-center-schedule-management/pkg/routes"
+	"log"
 
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
+
+func init() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file:", err)
+	}
+
+	{
+		database.InitPostgreSQL()
+		repo.InitializeModels()
+	}
+}
 
 func main() {
 	fmt.Println("LEARNING CENTER SCHEDULE MANAGEMENT!!!")
-
-	// Initializing
-	{
-		database.InitPostgreSQL()
-	}
 
 	router := gin.Default()
 	router.GET("/", handlers.Info)
