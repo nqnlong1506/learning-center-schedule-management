@@ -11,7 +11,7 @@ var (
 
 func GetUserPassByUsername(username string) (*User, error) {
 	user := &User{}
-	if err := database.DB.Select([]string{"username", "password"}).Where("username = ?", username).First(&user).Error; err != nil {
+	if err := database.DB.Select([]string{"username", "type", "password"}).Where("username = ?", username).First(&user).Error; err != nil {
 		return nil, err
 	}
 

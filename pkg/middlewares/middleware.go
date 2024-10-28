@@ -88,6 +88,14 @@ func VerifyAdminToken(c *gin.Context) {
 		return
 	}
 
+	// role verify
+	role := claims["role"].(float64)
+	if config.MAPPING_USER_TYPE[int32(role)] != config.USER_TYPE_Admin {
+		utils.ResponseAPI(c, config.HTTP_Status_UNAUTHORIZED, nil, "you are not admin.")
+		c.AbortWithStatus(401)
+		return
+	}
+
 	username := claims["username"].(string)
 	userModel, err := userrepo.GetUserByUsername(username)
 	if err != nil {
@@ -134,6 +142,14 @@ func VerifyUserToken(c *gin.Context) {
 	exp := claims["expiredTime"].(float64)
 	if now > int64(exp) {
 		utils.ResponseAPI(c, config.HTTP_Status_UNAUTHORIZED, nil, "token is expired.")
+		c.AbortWithStatus(401)
+		return
+	}
+
+	// role verify
+	role := claims["role"].(float64)
+	if config.MAPPING_USER_TYPE[int32(role)] != config.USER_TYPE_User {
+		utils.ResponseAPI(c, config.HTTP_Status_UNAUTHORIZED, nil, "you are not user.")
 		c.AbortWithStatus(401)
 		return
 	}

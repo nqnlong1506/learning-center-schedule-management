@@ -31,6 +31,7 @@ func Login(loginModel *models.LoginModel) (any, error) {
 	expiredTime := utils.GetJWTExpireTime()
 	claims := jwt.MapClaims{
 		"username":    user.Username,
+		"role":        user.Type,
 		"expiredTime": time.Now().Add(expiredTime).Unix(),
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
