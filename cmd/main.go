@@ -42,11 +42,11 @@ func main() {
 	// routes
 	{
 		admin := router.Group("/admin")
-		admin.Use(middlewares.VerifyJWTToken)
+		admin.Use(middlewares.VerifyAdminToken)
 		routes.SetupAdminRoutes(admin)
 
 		api := router.Group("/api")
-		api.Use(middlewares.VerifyJWTToken)
+		api.Use(middlewares.VerifyUserToken)
 		routes.SetupAPIRoutes(api)
 	}
 

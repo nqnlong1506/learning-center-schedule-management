@@ -17,6 +17,9 @@ func SetupAdminRoutes(rg *gin.RouterGroup) {
 	rg.GET("/", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"message": "Administrator"})
 	})
+
+	rg.GET("/account", handlers.AccountInfo)
+	rg.GET("/listusers", handlers.GetListUsers)
 }
 
 func SetupAPIRoutes(rg *gin.RouterGroup) {
