@@ -1,7 +1,7 @@
 package services
 
 import (
-	models "learning-center-schedule-management/pkg/models/auth"
+	"learning-center-schedule-management/pkg/models"
 	"log"
 
 	"github.com/gin-gonic/gin"

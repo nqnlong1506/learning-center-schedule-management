@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"learning-center-schedule-management/pkg/config"
-	models "learning-center-schedule-management/pkg/models/auth"
+	"learning-center-schedule-management/pkg/models"
 	"learning-center-schedule-management/pkg/services"
 	"learning-center-schedule-management/pkg/utils"
 
