@@ -20,6 +20,7 @@ func SetupAdminRoutes(rg *gin.RouterGroup) {
 
 	rg.GET("/account", handlers.AccountInfo)
 	rg.GET("/listusers", handlers.GetListUsers)
+	rg.GET("/users", handlers.GetUsers)
 }
 
 func SetupAPIRoutes(rg *gin.RouterGroup) {

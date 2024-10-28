@@ -36,3 +36,14 @@ func GetListUsers(c *gin.Context) {
 	utils.ResponseAPI(c, config.HTTP_Status_OK, users, "list users.")
 	return
 }
+
+func GetUsers(c *gin.Context) {
+	services.GetUsers()
+	// if err != nil {
+	// 	utils.ResponseAPI(c, config.HTTP_Status_INTERNAL_SERVER_ERROR, nil, err.Error())
+	// 	return
+	// }
+
+	utils.ResponseAPI(c, config.HTTP_Status_OK, "", "list users.")
+	return
+}

@@ -1,8 +1,11 @@
 package repo
 
 import (
+	"encoding/json"
+	"fmt"
 	database "learning-center-schedule-management/pkg/database/postgre"
 	"learning-center-schedule-management/pkg/models"
+	"log"
 )
 
 var (
@@ -28,6 +31,33 @@ func GetUserByUsername(username string) (*models.User, error) {
 }
 
 func GetUsers() ([]*User, error) {
+	t := teacher{
+		Subject:   "chinese",
+		Level:     "hsk5",
+		Address:   "tan phu",
+		Emerphone: "0988988988",
+		Salary:    250000,
+	}
+
+	rs, err := json.Marshal(&t)
+	if err != nil {
+		return nil, err
+	}
+	log.Println(string(rs))
+
+	stringTest := `{"subject": "english", "level": "ielts 8.0", "address": "Wonderland", "emerphone": "0111222333", "salary": 190000}`
+
+	var person teacher
+
+	// Convert (unmarshal) JSON string to struct
+	err = json.Unmarshal([]byte(stringTest), &person)
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+
+	log.Println(person.Salary)
+
 	return nil, nil
 }
 

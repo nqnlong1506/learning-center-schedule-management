@@ -1,7 +1,10 @@
 package repo
 
-import repo "learning-center-schedule-management/pkg/repositories/user"
+import (
+	database "learning-center-schedule-management/pkg/database/postgre"
+	user "learning-center-schedule-management/pkg/repositories/user"
+)
 
 func InitializeModels() {
-	repo.InitializeUser()
+	database.DB.AutoMigrate(&user.User{})
 }

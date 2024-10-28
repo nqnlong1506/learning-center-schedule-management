@@ -20,10 +20,20 @@ type User struct {
 	Email        string `gorm:"email;not null"`
 	Phone        string `gorm:"phone;not null"`
 	Type         int32  `gorm:"_type;not null"`
+	Additional   string `gorm:"additional"`
 }
 
-func InitializeUser() {
-	database.DB.AutoMigrate(&User{})
+type teacher struct {
+	Subject   string
+	Level     string
+	Address   string
+	Emerphone string
+	Salary    int
+}
+
+type student struct {
+	emerphone string
+	dayofweek int
 }
 
 func (u *User) insert() error {

@@ -9,6 +9,10 @@ func GetListUsers() ([]*models.User, error) {
 	return userrepo.GetListUsers()
 }
 
+func GetUsers() {
+	userrepo.GetUsers()
+}
+
 func GetUser(username string) (*models.User, error) {
 	return userrepo.GetUserByUsername(username)
 }
