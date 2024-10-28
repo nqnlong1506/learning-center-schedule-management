@@ -2,7 +2,7 @@ package middlewares
 
 import (
 	"learning-center-schedule-management/pkg/config"
-	repo "learning-center-schedule-management/pkg/repositories"
+	userrepo "learning-center-schedule-management/pkg/repositories/user"
 	"learning-center-schedule-management/pkg/utils"
 	"os"
 	"strings"
@@ -45,7 +45,7 @@ func VerifyJWTToken(c *gin.Context) {
 	}
 
 	username := claims["username"].(string)
-	_, err = repo.GetUserByUsername(username, false)
+	_, err = userrepo.GetUserByUsername(username)
 	if err != nil {
 		utils.ResponseAPI(c, config.HTTP_Status_UNAUTHORIZED, nil, "verified failed.")
 		c.AbortWithStatus(401)

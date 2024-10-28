@@ -3,7 +3,7 @@ package services
 import (
 	"fmt"
 	"learning-center-schedule-management/pkg/models"
-	repo "learning-center-schedule-management/pkg/repositories"
+	userrepo "learning-center-schedule-management/pkg/repositories/user"
 	"learning-center-schedule-management/pkg/utils"
 	"log"
 	"os"
@@ -16,7 +16,7 @@ import (
 
 func Login(loginModel *models.LoginModel) (any, error) {
 	// get user by username
-	user, err := repo.GetUserByUsername(loginModel.Username, true)
+	user, err := userrepo.GetUserPassByUsername(loginModel.Username)
 	if err != nil {
 		return nil, fmt.Errorf("username does not existed.")
 	}
@@ -51,13 +51,13 @@ func Register(registerModel *models.RegisterModel) (any, error) {
 		return nil, err
 	}
 
-	user, err := repo.GetUserByUsername(registerModel.Username, false)
+	user, err := userrepo.GetUserByUsername(registerModel.Username)
 	if err == nil {
 		log.Println(user)
 		return nil, fmt.Errorf("username existed.")
 	}
 
-	userID, err := repo.CreateUser(registerModel, hashedPassword)
+	userID, err := userrepo.CreateUser(registerModel, hashedPassword)
 	if err != nil {
 		return nil, err
 	}
