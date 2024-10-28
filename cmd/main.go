@@ -4,6 +4,7 @@ import (
 	"fmt"
 	database "learning-center-schedule-management/pkg/database/postgre"
 	"learning-center-schedule-management/pkg/handlers"
+	"learning-center-schedule-management/pkg/middlewares"
 	repo "learning-center-schedule-management/pkg/repositories"
 	"learning-center-schedule-management/pkg/routes"
 	"log"
@@ -30,13 +31,7 @@ func main() {
 	router := gin.Default()
 	router.GET("/", handlers.Info)
 	router.GET("/ping", handlers.Ping)
-
-	// Create a group for API routes
-	api := router.Group("/api")
-	{
-		userGroup := api.Group("/users")
-		routes.SetupUserRoutes(userGroup)
-	}
+	// router.GET("/verify", middlewares.VerifyJWTToken)
 
 	// authentication
 	auth := router.Group("/auth")
@@ -44,10 +39,15 @@ func main() {
 		routes.SetupAuthRoutes(auth)
 	}
 
-	// admin routes
-	admin := router.Group("/admin")
+	// routes
 	{
+		admin := router.Group("/admin")
+		admin.Use(middlewares.VerifyJWTToken)
 		routes.SetupAdminRoutes(admin)
+
+		api := router.Group("/api")
+		api.Use(middlewares.VerifyJWTToken)
+		routes.SetupAPIRoutes(api)
 	}
 
 	router.Run(":8080")

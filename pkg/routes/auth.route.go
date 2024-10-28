@@ -19,17 +19,8 @@ func SetupAdminRoutes(rg *gin.RouterGroup) {
 	})
 }
 
-func SetupUserRoutes(rg *gin.RouterGroup) {
-	rg.GET("/", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"message": "All users"})
-	})
-
-	rg.GET("/:id/view", func(c *gin.Context) {
-		id := c.Param("id")
-		c.JSON(http.StatusOK, gin.H{"user": id})
-	})
-
-	rg.POST("/", func(c *gin.Context) {
-		c.JSON(http.StatusCreated, gin.H{"message": "User created"})
-	})
+func SetupAPIRoutes(rg *gin.RouterGroup) {
+	// user
+	user := rg.Group("/user")
+	SetupUserRoutes(user)
 }

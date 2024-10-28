@@ -6,7 +6,6 @@ import (
 	"io"
 	"io/ioutil"
 	"learning-center-schedule-management/pkg/config"
-	"net/http"
 
 	"github.com/gin-gonic/gin"
 )
@@ -18,7 +17,7 @@ func ResponseAPI(c *gin.Context, code config.HTTP_STATUS_CODE, data any, message
 		"message": message,
 	}
 
-	c.JSON(http.StatusOK, response)
+	c.JSON(int(config.HTTP_STATUS_code[code]), response)
 }
 
 func RequestBodyReader(body io.ReadCloser, readMasks ...string) (map[string]any, error) {

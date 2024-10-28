@@ -18,9 +18,13 @@ func LoginBodyRequest(c *gin.Context) {
 	}
 
 	loginModel := models.GetLoginModel(body)
-	services.Login(loginModel)
+	login, err := services.Login(loginModel)
+	if err != nil {
+		utils.ResponseAPI(c, config.HTTP_Status_INTERNAL_SERVER_ERROR, nil, err.Error())
+		return
+	}
 
-	utils.ResponseAPI(c, config.HTTP_Status_OK, body, "logged in sucessfully.")
+	utils.ResponseAPI(c, config.HTTP_Status_OK, login, "logged in sucessfully.")
 	return
 }
 
@@ -57,12 +61,12 @@ func Register(c *gin.Context) {
 	body["type"] = int32(_type)
 
 	registerModel := models.GetRegisterModel(body)
-	result, err := services.Register(registerModel)
+	register, err := services.Register(registerModel)
 	if err != nil {
-		utils.ResponseAPI(c, config.HTTP_Status_INTERNAL_SERVER_ERROR, result, err.Error())
+		utils.ResponseAPI(c, config.HTTP_Status_INTERNAL_SERVER_ERROR, nil, err.Error())
 		return
 	}
 
-	utils.ResponseAPI(c, config.HTTP_Status_OK, result, "registered sucessfully.")
+	utils.ResponseAPI(c, config.HTTP_Status_OK, register, "registered sucessfully.")
 	return
 }

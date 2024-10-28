@@ -4,6 +4,8 @@ go 1.22.0
 
 require gorm.io/driver/postgres v1.5.9
 
+require github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
+
 require (
 	github.com/bytedance/sonic v1.12.3 // indirect
 	github.com/bytedance/sonic/loader v0.2.1 // indirect

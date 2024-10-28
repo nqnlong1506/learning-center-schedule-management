@@ -24,15 +24,15 @@ func InitializeUser() {
 	database.DB.AutoMigrate(&User{})
 }
 
-func GetUserByUsername(username string) (*User, error) {
-	user := &User{
-		Username: username,
-	}
-	if err := database.DB.First(&user).Error; err != nil {
+func GetUserByUsername(username string, isLogin bool) (*User, error) {
+	user := &User{}
+	if err := database.DB.Where("username = ?", username).First(&user).Error; err != nil {
 		return nil, err
 	}
 
-	user.Password = "*****"
+	if !isLogin {
+		user.Password = "*****"
+	}
 	return user, nil
 }
 
