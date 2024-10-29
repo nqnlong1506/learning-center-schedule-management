@@ -5,12 +5,11 @@ import (
 	"learning-center-schedule-management/pkg/config"
 	database "learning-center-schedule-management/pkg/database/postgre"
 	"learning-center-schedule-management/pkg/models"
-
-	"gorm.io/gorm"
+	"time"
 )
 
-type User struct {
-	gorm.Model
+type UnverifiedUser struct {
+	ID           uint   `gorm:"primarykey"`
 	Username     string `gorm:"username;not null;unique"`
 	Password     string `gorm:"password;not null"`
 	Name         string `gorm:"name;not null"`
@@ -21,18 +20,11 @@ type User struct {
 	Phone        string `gorm:"phone;not null"`
 	Type         int32  `gorm:"_type;not null"`
 	Additional   string `gorm:"additional"`
+	IsVerified   bool   `gorm:"is_verified; default:false"`
+	CreatedAt    time.Time
 }
 
-func (u *User) insert() error {
-	insert := database.DB.Create(u)
-	if insert.Error != nil {
-		return insert.Error
-	}
-
-	return nil
-}
-
-func (u *User) update() error {
+func (u *UnverifiedUser) insert() error {
 	insert := database.DB.Create(u)
 	if insert.Error != nil {
 		return insert.Error
@@ -42,7 +34,7 @@ func (u *User) update() error {
 }
 
 // adapter with model
-func (u *User) toModel() *models.User {
+func (u *UnverifiedUser) toModel() *models.User {
 	return &models.User{
 		Username:  u.Username,
 		Name:      u.Name,
@@ -51,6 +43,5 @@ func (u *User) toModel() *models.User {
 		Phone:     u.Phone,
 		Type:      config.MAPPING_USER_TYPE[u.Type],
 		CreatedAt: u.CreatedAt,
-		UpdatedAt: u.UpdatedAt,
 	}
 }

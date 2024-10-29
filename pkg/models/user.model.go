@@ -15,3 +15,14 @@ type User struct {
 	CreatedAt time.Time        `json:"createdAt"`
 	UpdatedAt time.Time        `json:"updatedAt,omitempty"`
 }
+
+type UnverifiedUser struct {
+	Username   string           `json:"username"`
+	Name       string           `json:"name"`
+	Birth      string           `json:"birth"`
+	Email      string           `json:"email"`
+	Phone      string           `json:"phone"`
+	Type       config.USER_TYPE `json:"type"`
+	IsVerified bool             `json:"verified"`
+	CreatedAt  time.Time        `json:"createdAt"`
+}
