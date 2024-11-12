@@ -2,11 +2,13 @@ package main
 
 import (
 	"fmt"
+	"learning-center-schedule-management/pkg/config"
 	database "learning-center-schedule-management/pkg/database/postgre"
 	"learning-center-schedule-management/pkg/handlers"
 	"learning-center-schedule-management/pkg/middlewares"
 	repo "learning-center-schedule-management/pkg/repositories"
 	"learning-center-schedule-management/pkg/routes"
+	"learning-center-schedule-management/pkg/utils"
 	"log"
 
 	"github.com/gin-gonic/gin"
@@ -22,12 +24,15 @@ func init() {
 	{
 		database.InitPostgreSQL()
 		repo.InitializeModels()
+
+		config.InitChannel()
 	}
 }
 
 func main() {
 	fmt.Println("LEARNING CENTER SCHEDULE MANAGEMENT!!!")
 
+	gin.SetMode(gin.ReleaseMode)
 	router := gin.Default()
 	router.GET("/", handlers.Info)
 	router.GET("/ping", handlers.Ping)
@@ -49,6 +54,15 @@ func main() {
 		api.Use(middlewares.VerifyUserToken)
 		routes.SetupAPIRoutes(api)
 	}
+
+	go func() {
+		for {
+			c := <- config.DebugChannel
+
+			utils.ResponseAPI(c.Ctx, config.HTTP_Status_OK, c.Data, "Debug.")
+			config.DoneChannel <- true
+		}
+	}()
 
 	router.Run(":8080")
 }

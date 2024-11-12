@@ -20,6 +20,19 @@ func ResponseAPI(c *gin.Context, code config.HTTP_STATUS_CODE, data any, message
 	c.JSON(int(config.HTTP_STATUS_code[code]), response)
 }
 
+func ResponseErrorAPI(c *gin.Context, err error) {
+	if err.Error() == "Debug" {
+		return
+	}
+
+	response := gin.H{
+		"status":  config.HTTP_STATUS_code[config.HTTP_Status_INTERNAL_SERVER_ERROR],
+		"message": err.Error(),
+	}
+
+	c.JSON(int(config.HTTP_STATUS_code[config.HTTP_Status_INTERNAL_SERVER_ERROR]), response)
+}
+
 func RequestBodyReader(body io.ReadCloser, readMasks ...string) (map[string]any, error) {
 	var mapBody gin.H
 

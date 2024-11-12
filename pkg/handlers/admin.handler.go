@@ -27,9 +27,9 @@ func AccountInfo(c *gin.Context) {
 }
 
 func GetListUsers(c *gin.Context) {
-	users, err := services.GetListUsers()
+	users, err := services.GetListUsers(c)
 	if err != nil {
-		utils.ResponseAPI(c, config.HTTP_Status_INTERNAL_SERVER_ERROR, nil, err.Error())
+		utils.ResponseErrorAPI(c, err)
 		return
 	}
 
@@ -37,13 +37,29 @@ func GetListUsers(c *gin.Context) {
 	return
 }
 
-func GetUsers(c *gin.Context) {
-	services.GetUsers()
+func GetUsers(c *gin.Context)  {
+	err := services.GetUsers(c)
+	if err != nil {
+		utils.ResponseErrorAPI(c, err)
+		return
+	}
 	// if err != nil {
 	// 	utils.ResponseAPI(c, config.HTTP_Status_INTERNAL_SERVER_ERROR, nil, err.Error())
 	// 	return
 	// }
 
-	utils.ResponseAPI(c, config.HTTP_Status_OK, "", "list users.")
+	// test := config.DebugStruct{
+	// 	Ctx: c,
+	// 	Data: gin.H{
+	// 		"name": "long",
+	// 		"age": 21,
+	// 	},
+	// }
+
+	// config.DebugChannel <- test
+	// <- config.DoneChannel
+
+	// utils.ResponseAPI(c, config.HTTP_Status_OK, "", "list users.")
+	// utils.ResponseAPI(c, config.HTTP_Status_OK, "", "list users ngoclong.")
 	return
 }
