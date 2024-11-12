@@ -7,6 +7,8 @@ import (
 	database "learning-center-schedule-management/pkg/database/postgre"
 	"learning-center-schedule-management/pkg/models"
 	"log"
+
+	"gorm.io/gorm"
 )
 
 var (
@@ -65,6 +67,13 @@ func GetListUsers() ([]*models.User, error) {
 	if err := database.DB.Select(readMasks).Find(&users).Error; err != nil {
 		return nil, err
 	}
+
+	// TODO: get last query
+	long := database.DB.ToSQL(func(tx *gorm.DB) *gorm.DB {
+		return tx.Select(readMasks).Find(&users)
+	})
+
+	log.Println(long)
 
 	var usersModel []*models.User
 	for _, u := range users {
