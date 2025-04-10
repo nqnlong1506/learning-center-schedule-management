@@ -1,4 +1,5 @@
 # customize
+/migrations
 /test
 *.tag.gz
 
