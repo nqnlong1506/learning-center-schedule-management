@@ -1,7 +1,8 @@
-import { Controller, Get, Req, Res } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, Res } from '@nestjs/common';
 import { CustomerService } from './customer.service';
 import { Request, Response } from 'express';
 import { APIResponse } from 'src/config/api';
+import { CustomerEntity } from './entities/customer.entity';
 
 @Controller('customer')
 export class CustomerController {
@@ -31,6 +32,17 @@ export class CustomerController {
       success: true,
       data: customer,
       message: '[customer-view] api.',
+    };
+    return res.json(reponse);
+  }
+
+  @Post()
+  async post(@Body() body: CustomerEntity, @Res() res: Response) {
+    console.log(body);
+    const reponse: APIResponse = {
+      success: true,
+      data: undefined,
+      message: '[customer-post] api.',
     };
     return res.json(reponse);
   }
