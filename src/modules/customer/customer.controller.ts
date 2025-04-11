@@ -24,7 +24,7 @@ export class CustomerController {
       const response: APIResponse = {
         success: false,
         data: undefined,
-        message: `[customer-view] ${customer.message}`,
+        message: `[customer-view] ${customer.message}.`,
       };
       return res.json(response);
     }
@@ -39,6 +39,15 @@ export class CustomerController {
   @Post()
   async post(@Body() body: CustomerEntity, @Res() res: Response) {
     console.log(body);
+    const create = await this.customerService.post(body);
+    if (create instanceof Error) {
+      const response: APIResponse = {
+        success: false,
+        data: undefined,
+        message: `[customer-post] ${create.message}.`,
+      };
+      return res.json(response);
+    }
     const reponse: APIResponse = {
       success: true,
       data: undefined,

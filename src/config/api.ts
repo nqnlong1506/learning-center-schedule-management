@@ -5,3 +5,8 @@ export interface APIResponse {
   attrs?: any;
   benchmark?: any;
 }
+
+export const SuccessStatus = {
+  200: 'OK',
+  201: 'Created',
+};

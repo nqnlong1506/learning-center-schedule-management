@@ -1,14 +1,5 @@
-import {
-  Repository,
-  QueryRunner,
-  DataSource,
-  FindOneOptions,
-  FindManyOptions,
-  DeepPartial,
-  FindOperator,
-} from 'typeorm';
+import { Repository, QueryRunner, DataSource, FindOneOptions } from 'typeorm';
 import { Injectable } from '@nestjs/common';
-import { isObject } from 'lodash';
 
 @Injectable()
 export class BaseRepository<T> extends Repository<T> {
@@ -122,7 +113,7 @@ export class BaseRepository<T> extends Repository<T> {
     return BaseRepository.setRunner(key, undefined);
   }
 
-  async createEntity(entity: DeepPartial<T>, keyRunner?: string): Promise<T> {
+  async createEntity(entity: T, keyRunner?: string): Promise<T> {
     if (keyRunner) {
       const runner = BaseRepository.getRunner(keyRunner);
 
@@ -130,23 +121,15 @@ export class BaseRepository<T> extends Repository<T> {
         throw 'QueryRunner is either not initialized or already released. Please start a new transaction.';
       }
 
-      const entityData = await runner.manager.create(
-        this.repository.target,
-        entity,
-      );
-      const create = await runner.manager.save(entityData);
+      const create = await runner.manager.save(entity);
       return create;
     }
 
-    const entityData = await this.repository.create(entity);
-    const create = await this.repository.save(entityData);
+    const create = await this.repository.save(entity);
     return create;
   }
 
-  async createEntityBatch(
-    entity: DeepPartial<T>[],
-    keyRunner?: string,
-  ): Promise<T[]> {
+  async updateEntity(entity: T, keyRunner?: string): Promise<T> {
     if (keyRunner) {
       const runner = BaseRepository.getRunner(keyRunner);
 
@@ -154,164 +137,12 @@ export class BaseRepository<T> extends Repository<T> {
         throw 'QueryRunner is either not initialized or already released. Please start a new transaction.';
       }
 
-      const entityData = await runner.manager.create(
-        this.repository.target,
-        entity,
-      );
-      const create = await runner.manager.save(entityData);
-      return create;
+      const update = await runner.manager.save(entity);
+      return update;
     }
 
-    const entityData = await this.repository.create(entity);
-    const create = await this.repository.save(entityData);
-    return create;
-  }
-
-  checkSaveWhere(where) {
-    try {
-      if (
-        !where ||
-        Object.values(where).some(
-          (v) =>
-            v === undefined ||
-            v === null ||
-            (isObject(v) &&
-              !(v instanceof FindOperator) &&
-              this.checkSaveWhere(v)),
-        )
-      ) {
-        throw new Error(
-          'SECURITY WARNING: Invalid update condition - missing WHERE clause',
-        );
-      }
-      return false;
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  async updateEntities(
-    where: Record<string, any>,
-    updateData: DeepPartial<T>,
-    keyRunner?: string,
-  ): Promise<T[]> {
-    try {
-      this.checkSaveWhere(where);
-      if (keyRunner) {
-        const runner = BaseRepository.getRunner(keyRunner);
-
-        if (!runner || runner.isReleased) {
-          throw new Error(
-            'QueryRunner is either not initialized or already released. Please start a new transaction.',
-          );
-        }
-        const entities = await runner.manager.find(this.repository.target, {
-          where,
-        });
-
-        // if (!entities.length) {
-        //   throw new Error('No entities found with the specified conditions.');
-        // }
-
-        const updatedEntities: T[] = [];
-        for (const entity of entities) {
-          const updatedEntity = this.repository.merge(entity, updateData);
-
-          const result = await runner.manager.save(
-            this.repository.target,
-            updatedEntity,
-          );
-
-          updatedEntities.push(result);
-        }
-
-        return updatedEntities;
-      } else {
-        const entities = await this.repository.find({ where });
-        // if (!entities.length) {
-        //   throw new Error('No entities found with the specified conditions.');
-        // }
-
-        const updatedEntities: T[] = [];
-        for (const entity of entities) {
-          const updatedEntity = this.repository.merge(entity, updateData);
-          const result = await this.repository.save(updatedEntity);
-          updatedEntities.push(result);
-        }
-        return updatedEntities;
-      }
-    } catch (error) {
-      throw new Error(`Failed to update entities: ${error.message}`);
-    }
-  }
-
-  async updateEntity(
-    where: Record<string, any>,
-    updateData: DeepPartial<T>,
-    keyRunner?: string,
-  ): Promise<T> {
-    try {
-      this.checkSaveWhere(where);
-      if (keyRunner) {
-        const runner = BaseRepository.getRunner(keyRunner);
-        if (!runner || runner.isReleased) {
-          throw new Error(
-            'QueryRunner is either not initialized or already released. Please start a new transaction.',
-          );
-        }
-        const entity = await runner.manager.findOne(this.repository.target, {
-          where,
-        });
-        // if (!entity) {
-        //   throw new Error('No entity found with the specified conditions.');
-        // }
-        const updatedEntity = this.repository.merge(entity, updateData);
-        return await runner.manager.save(this.repository.target, updatedEntity);
-      } else {
-        const entity = await this.repository.findOne({ where });
-        // if (!entity) {
-        //   throw new Error('No entity found with the specified conditions.');
-        // }
-        const updatedEntity = this.repository.merge(entity, updateData);
-        return await this.repository.save(updatedEntity);
-      }
-    } catch (error: any) {
-      throw new Error(`Failed to update entity: ${error.message}`);
-    }
-  }
-
-  async deleteEntities(
-    where: Record<string, any>,
-    keyRunner?: string,
-  ): Promise<void> {
-    try {
-      this.checkSaveWhere(where);
-      if (keyRunner) {
-        const runner = BaseRepository.getRunner(keyRunner);
-        if (!runner || runner.isReleased) {
-          throw new Error(
-            'QueryRunner is either not initialized or already released. Please start a new transaction.',
-          );
-        }
-        const entities = await runner.manager.find(this.repository.target, {
-          where,
-        });
-        // if (!entities.length) {
-        //   throw new Error('No entities found with the specified conditions.');
-        // }
-        for (const entity of entities) {
-          await runner.manager.remove(this.repository.target, entity);
-        }
-      } else {
-        const entities = await this.repository.find({ where });
-        // if (!entities.length) {
-        //   throw new Error('No entities found with the specified conditions.');
-        // }
-        await this.repository.remove(entities);
-      }
-    } catch (error: any) {
-      throw new Error(`Failed to delete entities: ${error.message}`);
-    }
+    const update = await this.repository.save(entity);
+    return update;
   }
 
   async getItem(options: FindOneOptions<T>): Promise<T | undefined> {
@@ -323,39 +154,4 @@ export class BaseRepository<T> extends Repository<T> {
 
     return result;
   }
-
-  async getItems(
-    options?: FindManyOptions<T>,
-  ): Promise<ListEntityResutls<T> | undefined> {
-    try {
-      const results = await this.repository.find(options);
-
-      const list = new ListEntityResutls<T>();
-      list.data = results;
-      list.totalCount = await this.repository.count(options);
-      list.totalPages = Math.ceil(list.totalCount / options.take);
-
-      return list;
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  async getItemsWithoutPagination(
-    options?: FindManyOptions<T>,
-  ): Promise<T[] | undefined> {
-    try {
-      const results = await this.repository.find(options);
-
-      return results;
-    } catch (error) {
-      throw error;
-    }
-  }
-}
-
-export class ListEntityResutls<T> {
-  public data: T[];
-  public totalCount: number;
-  public totalPages: number;
 }

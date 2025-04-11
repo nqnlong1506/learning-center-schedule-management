@@ -4,9 +4,10 @@ import { CustomerService } from './customer.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CustomerEntity } from './entities/customer.entity';
 import { CustomerRepository } from './repositories/customer.repository';
+import { VSolSenderModule } from 'src/third-party/v-sol-sender/v-sol-sender.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([CustomerEntity])],
+  imports: [TypeOrmModule.forFeature([CustomerEntity]), VSolSenderModule],
   controllers: [CustomerController],
   providers: [CustomerService, CustomerRepository],
   exports: [CustomerRepository],

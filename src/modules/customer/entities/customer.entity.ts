@@ -3,6 +3,7 @@ import { CustomerTypeEnum } from '../enums';
 import { GenderEnum } from 'src/config/enums/gender';
 import { YesNoEnum } from 'src/config/enums/yesno';
 import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { passwordCrypt } from 'src/utils/password';
 
 @Entity('crm_customer', { orderBy: { createdAt: 'DESC' } })
 export class CustomerEntity {
@@ -109,21 +110,21 @@ export class CustomerEntity {
 
   toJson(): void {}
 
-  toCreateEntity(): CustomerEntity {
-    if (this || this === undefined) {
+  static toCreateEntity(customer: CustomerEntity | undefined): CustomerEntity {
+    if (!customer) {
       return undefined;
     }
     const entity = new CustomerEntity();
-    entity.id = this.id;
-    entity.password = this.password;
-    entity.name = this.name;
-    entity.mobilephone = this.mobilephone;
-    entity.birthdate = this.birthdate;
-    entity.sex = this.sex || GenderEnum.MALE;
-    entity.email = this.email;
-    entity.postalCode = this.postalCode;
-    entity.address = this.address;
-    entity.addressDetail = this.addressDetail;
+    entity.id = customer.id;
+    entity.password = passwordCrypt(customer.password);
+    entity.name = customer.name;
+    entity.mobilephone = customer.mobilephone;
+    entity.birthdate = customer.birthdate;
+    entity.sex = customer.sex || GenderEnum.MALE;
+    entity.email = customer.email;
+    entity.postalCode = customer.postalCode;
+    entity.address = customer.address;
+    entity.addressDetail = customer.addressDetail;
 
     return entity;
   }
