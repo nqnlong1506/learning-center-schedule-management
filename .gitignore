@@ -2,6 +2,7 @@
 /migrations
 /test
 *.tag.gz
+Makefile
 
 # compiled output
 /dist
