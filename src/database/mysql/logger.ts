@@ -123,4 +123,20 @@ export class Logger implements TypeORMLogger {
     const log = `[${this.currentTime}] : ${data}\n`;
     fs.appendFileSync(logFile, log);
   }
+  logHomepagePre(pathLog: string, data: string) {
+    const today = new Date().toISOString().split('T')[0].replace(/-/g, '');
+    const logDir = path.join(
+      process.cwd(),
+      'logs',
+      'homepage',
+      'pre',
+      `${pathLog}`,
+    );
+    if (!fs.existsSync(logDir)) {
+      fs.mkdirSync(logDir, { recursive: true });
+    }
+    const logFile = path.join(logDir, `${today}.log`);
+    const log = `[${this.currentTime}] : ${data}\n`;
+    fs.appendFileSync(logFile, log);
+  }
 }
