@@ -26,23 +26,22 @@ export class CustomerService {
   }
 
   async post(body: CustomerEntity): Promise<any | Error> {
+    const exist = await this.cRepo.exists({ where: { id: body.id } });
+    if (exist) {
+      return new Error('customer already existed');
+    }
     const key = await this.cRepo.startTransaction();
-    console.log(key);
     try {
-      const exist = await this.cRepo.exists({ where: { id: body.id } });
-      if (exist) {
-        throw new Error('customer already existed');
-      }
       const entity = CustomerEntity.toCreateEntity(body);
       const create = await this.cRepo.createEntity(entity, key);
-      await this.cRepo.rollbackTransaction(key);
 
       // await this.vsolService.HP_CUST_001(create);
 
       await this.cRepo.commitTransaction(key);
       return create;
     } catch (error) {
-      console.log('post error', error);
+      console.log('error', error?.message);
+      await this.cRepo.rollbackTransaction(key);
       return error;
     }
   }

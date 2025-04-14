@@ -10,7 +10,6 @@ import { Logger } from 'src/database/mysql/logger';
 
 @Injectable()
 export class HomepageLog implements NestInterceptor {
-
   constructor(private readonly reflector: Reflector) {}
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
@@ -22,7 +21,7 @@ export class HomepageLog implements NestInterceptor {
       HEADER: request.headers,
       DATA: request.body,
     };
-    logger.logHomepagePre(logPath,JSON.stringify(data_log));
+    logger.logHomepagePre(logPath, JSON.stringify(data_log));
     return next.handle();
   }
 }
