@@ -34,17 +34,17 @@ export class VSolReceiverController {
     return res.json(response);
   }
 
-  @Post('hp_st_001 ')
+  @Post('hp_st_001')
   @LogPath('HP_ST_001')
   @UseInterceptors(HomepageLog)
   // @UseGuards(TradeAuthGuard)
   async hp_st_001(
     @Body()
-    body: HP_ST_001Dto,
+    body: any,
     @Res() res: Response,
   ) {
     try {
-      await this.vSolReceiverService.createStock(body);
+      await this.vSolReceiverService.createStock(body.DATA);
       const response: HpAPIResponse = {
         IF_RST_MSG: true,
         IF_RST_CD: '00',

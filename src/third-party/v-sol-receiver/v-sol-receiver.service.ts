@@ -10,7 +10,8 @@ export class VSolReceiverService {
   async createStock(data: HP_ST_001Dto) {
     const key = await this.stockRepository.startTransaction();
     try {
-      // await this.stockRepository.createEntity(data.STOCK, key);
+      const { STOCK, WARRANTY } = data;
+      await this.stockRepository.createEntity(STOCK, key);
       await this.stockRepository.commitTransaction(key);
     } catch (error) {
       await this.stockRepository.rollbackTransaction(key);

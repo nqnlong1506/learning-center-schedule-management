@@ -1,4 +1,4 @@
-import { IsDate, IsNumber, IsString } from 'class-validator';
+import { IsBoolean, IsDate, IsNumber, IsString } from 'class-validator';
 import {
   Column,
   CreateDateColumn,
@@ -65,6 +65,10 @@ export class StockEntity {
   @IsString()
   @Column({ name: 'car_adp', type: 'varchar', length: 100, nullable: true })
   CAR_ADP: string;
+
+  @IsNumber()
+  @Column({ name: 'car_adp_hd', type: 'int', default: 0 })
+  CAR_ADP_HD: number;
 
   @IsString()
   @Column({ name: 'mnw_no_pe', type: 'varchar', length: 100, nullable: true })
@@ -134,6 +138,10 @@ export class StockEntity {
     nullable: true,
   })
   EVALUATION_COMM: string;
+
+  @IsBoolean()
+  @Column({ name: 'is_del', type: 'boolean', default: false })
+  isDel: boolean;
 
   @IsDate()
   @CreateDateColumn({ name: 'reg_date', type: 'timestamp', nullable: true })
