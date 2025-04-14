@@ -108,7 +108,15 @@ export class CustomerEntity {
   @Column({ name: 'third_agreed', comment: 'THIRD_AGRE_YN - 제3자동의여부' })
   thirdAgreed: string;
 
-  toJson(): void {}
+  @Column({ name: 'created_at', type: 'timestamp' })
+  createdAt: Date;
+
+  @Column({ name: 'updated_at', type: 'timestamp' })
+  updatedAt: Date;
+
+  toJson(): void {
+    this.password = undefined;
+  }
 
   static toCreateEntity(customer: CustomerEntity | undefined): CustomerEntity {
     if (!customer) {
