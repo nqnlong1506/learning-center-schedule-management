@@ -5,7 +5,7 @@ import { YesNoEnum } from 'src/config/enums/yesno';
 import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { passwordCrypt } from 'src/utils/password';
 
-@Entity('crm_customer', { orderBy: { createdAt: 'DESC' } })
+@Entity('customer', { orderBy: { createdAt: 'DESC' } })
 export class CustomerEntity {
   @PrimaryGeneratedColumn({ type: 'int', comment: 'CUST_NO - 고객번호' })
   no: number;

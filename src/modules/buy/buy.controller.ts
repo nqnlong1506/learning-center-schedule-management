@@ -1,4 +1,4 @@
-import { Body, Controller, HttpStatus, Post, Res } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Post, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { BuyService } from './buy.service';
 
@@ -38,6 +38,20 @@ export class BuyController {
     try {
       const buy = await this.buyService.create(body);
       return res.status(HttpStatus.OK).json({ success: true, ...buy });
+    } catch (error) {
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        message: error.message,
+        success: false,
+      });
+    }
+  }
+  @Get('test')
+  async test(@Res() res: Response) {
+    try {
+      console.log('test');
+      return '12312312';
+      // const buy = await this.buyService.create(body);
+      // return res.status(HttpStatus.OK).json({ success: true, ...buy });
     } catch (error) {
       return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         message: error.message,

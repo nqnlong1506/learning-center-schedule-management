@@ -13,7 +13,7 @@ import {
 import { AutobeginEntity } from './autobegin.entity';
 import { Transform } from 'class-transformer';
 
-@Entity('crm_autobegins_repair_list')
+@Entity('autobegins_repair_list')
 export class AutobeginRepairListEntity {
   @IsNumber()
   @PrimaryGeneratedColumn({ name: 'id' })

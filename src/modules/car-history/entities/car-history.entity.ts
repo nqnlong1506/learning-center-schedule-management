@@ -7,7 +7,7 @@ import {
   Unique,
 } from 'typeorm';
 
-@Entity('crm_car_history')
+@Entity('car_history')
 export class CarHistoryEntity {
   @PrimaryGeneratedColumn()
   id: number;

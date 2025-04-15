@@ -10,7 +10,7 @@ import {
 import { AutobeginEntity } from './autobegin.entity';
 import { Transform } from 'class-transformer';
 
-@Entity('crm_autobegins_mileage_price')
+@Entity('autobegins_mileage_price')
 export class AutobeginMileagePriceEntity {
   @IsNumber()
   @PrimaryGeneratedColumn({ name: 'id' })

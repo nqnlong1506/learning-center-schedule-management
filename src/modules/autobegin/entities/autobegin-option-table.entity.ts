@@ -10,7 +10,7 @@ import {
 import { AutobeginEntity } from './autobegin.entity';
 import { Transform } from 'class-transformer';
 
-@Entity('crm_autobegins_option_table')
+@Entity('autobegins_option_table')
 export class AutobeginOptionTableEntity {
   @IsNumber()
   @PrimaryGeneratedColumn({ name: 'id' })

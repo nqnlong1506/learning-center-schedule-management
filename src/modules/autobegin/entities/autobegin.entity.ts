@@ -17,7 +17,7 @@ import { AutobeginUsedPriceEntity } from './autobegin-usedprice.entity';
 import { AutobeginSeloptListEntity } from './autobegin-seloptlist.entity';
 import { Transform } from 'class-transformer';
 
-@Entity('crm_autobegins')
+@Entity('autobegins')
 export class AutobeginEntity {
   @IsNumber()
   @PrimaryGeneratedColumn()
