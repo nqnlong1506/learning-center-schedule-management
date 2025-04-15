@@ -62,9 +62,9 @@ export class StockEntity {
   @Column({ name: 'newprice', type: 'int', nullable: true })
   NEWPRICE: number;
 
-  @IsString()
-  @Column({ name: 'car_adp', type: 'varchar', length: 100, nullable: true })
-  CAR_ADP: string;
+  @IsNumber()
+  @Column({ name: 'car_adp', type: 'int', default: 0 })
+  CAR_ADP: number;
 
   @IsNumber()
   @Column({ name: 'car_adp_hd', type: 'int', default: 0 })

@@ -53,8 +53,8 @@ export class HP_ST_001_STOCK_Dto {
   @IsNumber()
   NEWPRICE: number;
 
-  @IsString()
-  CAR_ADP: string;
+  @IsNumber()
+  CAR_ADP: number;
 
   @IsString()
   MNW_NO_PE: string;
