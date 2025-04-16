@@ -19,7 +19,6 @@ export class SellController {
       };
       return res.json(response);
     }
-
     const response: APIResponse = {
       success: true,
       data: body,
