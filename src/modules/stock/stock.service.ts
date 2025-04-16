@@ -37,7 +37,16 @@ export class StockService {
   }): Promise<any> {
     try {
       const { page, pageSize, orderBy, orderDirection, whereCondition } = query;
-      const { topFilterType, vehicleFeatures } = whereCondition;
+      const {
+        topFilterType,
+        vehicleFeatures,
+        brands,
+        colors,
+        yearMin,
+        yearMax,
+        carPriceMin,
+        carPriceMax,
+      } = whereCondition;
       let numberPage = pageSize;
       const queryBuilder = this.stockRepository.createQueryBuilder('stock');
       queryBuilder.andWhere('stock.is_del = 0 ');
@@ -66,8 +75,6 @@ export class StockService {
       }
       if (vehicleFeatures) {
         const featureCodes = this.convertFeatureNamesToCodes(vehicleFeatures);
-        console.log('featureCodes', featureCodes);
-
         queryBuilder.andWhere(
           new Brackets((qb) => {
             featureCodes.forEach((code) => {
@@ -77,6 +84,53 @@ export class StockService {
             });
           }),
         );
+      }
+      if (brands) {
+        const brandsArray = brands.split(',');
+        queryBuilder.andWhere(
+          new Brackets((qb) => {
+            brandsArray.forEach((brand, index) => {
+              qb.orWhere(`stock.BRAND LIKE :brand${index}`, {
+                [`brand${index}`]: `%${brand}%`,
+              });
+            });
+          }),
+        );
+      }
+      if (colors) {
+        const colorsArray = colors.split(',');
+        queryBuilder.andWhere(
+          new Brackets((qb) => {
+            colorsArray.forEach((color, index) => {
+              qb.orWhere(`stock.COLOR LIKE :color${index}`, {
+                [`color${index}`]: `%${color}%`,
+              });
+            });
+          }),
+        );
+      }
+      if (yearMin) {
+        queryBuilder.andWhere('stock.YEAR >= :yearMin', { yearMin: yearMin });
+      }
+      if (yearMax) {
+        queryBuilder.andWhere('stock.YEAR <= :yearMax', { yearMax: yearMax });
+      }
+      if (carPriceMin || carPriceMax) {
+        let condition = `CASE 
+          WHEN stock.LIS_TYP = '01' THEN stock.CAR_ADP 
+          WHEN stock.LIS_TYP = '02' THEN stock.CAR_ADP_HD 
+          ELSE stock.CAR_ADP_WP 
+          END`;
+        if (carPriceMin) {
+          queryBuilder.andWhere(`${condition} >= :carPriceMin`, {
+            carPriceMin,
+          });
+        }
+        if (carPriceMax) {
+          queryBuilder.andWhere(`${condition} <= :carPriceMax`, {
+            carPriceMax,
+          });
+        }
       }
       if (orderBy) {
         queryBuilder.orderBy(`stock.${orderBy}`, orderDirection || 'ASC');
