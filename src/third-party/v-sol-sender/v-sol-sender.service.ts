@@ -7,9 +7,9 @@ import { HP_CT_001Dto } from '../dto/HP_CT_001.dto';
 
 @Injectable()
 export class VSolSenderService {
-  private url = process.env.V_SOL_BASE_URL_DEV || 'localhost:3000';
   constructor(private readonly httpService: HttpService) {}
-  V_SOL_URL = process.env.V_SOL_BASE_URL_DEV || 'localhost:3000';
+  V_SOL_URL =
+    (process.env.V_SOL_BASE_URL_DEV || 'http://localhost:3000') + '/api';
 
   async HP_CUST_001(body: any): Promise<void> {
     console.log('sending to v-sol...');
@@ -45,18 +45,16 @@ export class VSolSenderService {
         DATA,
       };
 
-      const response = await axios.post(this.url + 'crm/hp-st-001', postData, {
-        headers: {
-          'Content-Type': 'application/json',
-          // Authorization: `Bearer ${token}`,
-        },
-      });
-      console.log('response:', response.data);
+      const response = await axios.post(
+        this.V_SOL_URL + '/homepage/hp-ct-001',
+        postData,
+      );
       return true;
 
       // const res = response.data;
       // return this.handleHomepageResponse(DATA, res);
     } catch (error) {
+      console.error('Error sending HP_CT_001:', error);
       throw error;
     }
   }
