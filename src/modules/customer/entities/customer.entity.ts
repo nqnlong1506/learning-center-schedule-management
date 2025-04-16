@@ -2,11 +2,19 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { CustomerTypeEnum } from '../enums';
 import { GenderEnum } from 'src/config/enums/gender';
 import { YesNoEnum } from 'src/config/enums/yesno';
-import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 import { passwordCrypt } from 'src/utils/password';
 
 @Entity('customer', { orderBy: { createdAt: 'DESC' } })
 export class CustomerEntity {
+  @IsNumber()
+  @IsOptional()
   @PrimaryGeneratedColumn({ type: 'int', comment: 'CUST_NO - 고객번호' })
   no: number;
 
@@ -41,7 +49,7 @@ export class CustomerEntity {
   @Column({ name: 'birth_date', comment: '생년월일' })
   birthdate: string;
 
-  @IsEnum(YesNoEnum)
+  @IsEnum(GenderEnum)
   @IsOptional()
   @Column({ comment: 'SEX_TP - 성별유형' })
   sex: GenderEnum;
@@ -97,7 +105,7 @@ export class CustomerEntity {
   businessNo: string;
 
   @Column({ name: 'corp_no', comment: 'CORP_REG_NO - 법인등록번호' })
-  coporationNo: string;
+  corporationNo: string;
 
   @Column({
     name: 'info_form_agreed',

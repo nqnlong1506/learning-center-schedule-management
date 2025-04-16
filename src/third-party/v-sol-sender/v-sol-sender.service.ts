@@ -2,7 +2,7 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import axios, { AxiosError } from 'axios';
 import { catchError, firstValueFrom } from 'rxjs';
-import { SuccessStatus } from 'src/config/api';
+import { APIStatus } from 'src/config/api';
 import { HP_CT_001Dto } from '../dto/HP_CT_001.dto';
 
 @Injectable()
@@ -30,7 +30,7 @@ export class VSolSenderService {
         ),
     );
     console.log('sending status:', status);
-    if (!SuccessStatus[status] || !data || !data.success)
+    if (!APIStatus[status] || !data || !data.success)
       throw new Error(data?.message || 'error');
   }
 

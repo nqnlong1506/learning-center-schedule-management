@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CustomerRepository } from './repositories/customer.repository';
 import { CustomerEntity } from './entities/customer.entity';
 import { VSolSenderService } from 'src/third-party/v-sol-sender/v-sol-sender.service';
+import { SubVSolSenderService } from 'src/third-party/sub-v-sol-sender/sub-v-sol-sender.service';
 
 @Injectable()
 export class CustomerService {
@@ -11,6 +12,7 @@ export class CustomerService {
 
     // services
     private readonly vsolService: VSolSenderService,
+    private readonly senderService: SubVSolSenderService,
   ) {}
 
   async viewByNo(no: number): Promise<CustomerEntity | Error> {
@@ -35,7 +37,8 @@ export class CustomerService {
       const entity = CustomerEntity.toCreateEntity(body);
       const create = await this.cRepo.createEntity(entity, key);
 
-      // await this.vsolService.HP_CUST_001(create);
+      const send = await this.senderService.HP_CUST_001(create);
+      if (send instanceof Error) throw send;
 
       await this.cRepo.commitTransaction(key);
       return create;
@@ -45,23 +48,4 @@ export class CustomerService {
       return error;
     }
   }
-
-  // async postTest(body: CustomerEntity): Promise<any | Error> {
-  //   const queryRunner = this.dataSource.createQueryRunner();
-
-  //   await queryRunner.connect();
-  //   await queryRunner.startTransaction();
-  //   try {
-  //     await queryRunner.manager.save(users[0]);
-  //     await queryRunner.manager.save(users[1]);
-
-  //     await queryRunner.commitTransaction();
-  //   } catch (err) {
-  //     // since we have errors lets rollback the changes we made
-  //     await queryRunner.rollbackTransaction();
-  //   } finally {
-  //     // you need to release a queryRunner which was manually instantiated
-  //     await queryRunner.release();
-  //   }
-  // }
 }

@@ -11,7 +11,13 @@ export interface HpAPIResponse {
   [key: string]: any;
 }
 
-export const SuccessStatus = {
+export interface ThirdAPIResponse {
+  IF_RST_CD: '00' | '99';
+  IF_RST_MSG: string;
+  [key: string]: any;
+}
+
+export const APIStatus = {
   200: 'OK',
   201: 'Created',
 };
