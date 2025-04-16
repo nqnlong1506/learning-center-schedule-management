@@ -38,7 +38,6 @@ export class CustomerController {
 
   @Post()
   async post(@Body() body: CustomerEntity, @Res() res: Response) {
-    console.log(body);
     const create = await this.customerService.post(body);
     if (create instanceof Error) {
       const response: APIResponse = {
