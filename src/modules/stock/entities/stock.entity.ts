@@ -70,6 +70,10 @@ export class StockEntity {
   @Column({ name: 'car_adp_hd', type: 'int', default: 0 })
   CAR_ADP_HD: number;
 
+  @IsNumber()
+  @Column({ name: 'car_adp_wp', type: 'int', default: 0 })
+  CAR_ADP_WP: number;
+
   @IsString()
   @Column({ name: 'mnw_no_pe', type: 'varchar', length: 100, nullable: true })
   MNW_NO_PE: string;
@@ -129,6 +133,20 @@ export class StockEntity {
   @IsString()
   @Column({ name: 'rep_his', type: 'varchar', length: 100, nullable: true })
   REP_HIS: string;
+
+  @IsString()
+  @Column({ name: 'brand', type: 'varchar', length: 20, nullable: true })
+  BRAND: string;
+
+  @IsString()
+  @Column({
+    name: 'lis_typ',
+    type: 'varchar',
+    length: 2,
+    nullable: true,
+    default: '01',
+  })
+  LIS_TYP: string;
 
   @IsString()
   @Column({
