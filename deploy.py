@@ -10,8 +10,8 @@ import getpass
 # Args
 parser = argparse.ArgumentParser(description='Args for run command.')
 parser.add_argument("--step", type=int, default=3)
-parser.add_argument("--id", type=str, default='duy.nguyennhat')
-parser.add_argument("--password", type=str, default='yQp5FkECrwFt')  # Mật khẩu không còn trong args
+parser.add_argument("--id", type=str, default='minhhieu')
+parser.add_argument("--password", type=str, default='QjO2lTDCF&r|#n|')  # Mật khẩu không còn trong args
 parser.add_argument("--env", type=str, default='dev', help='Environment for React build')  # Thêm biến môi trường
 args = parser.parse_args()
 

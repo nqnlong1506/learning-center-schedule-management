@@ -57,4 +57,28 @@ export class VSolReceiverController {
       } as HpAPIResponse);
     }
   }
+
+  @Post('hp_ct_002')
+  @LogPath('HP_CT_002')
+  @UseInterceptors(HomepageLog)
+  // @UseGuards(TradeAuthGuard)
+  async hp_ct_002(
+    @Body()
+    body: any,
+    @Res() res: Response,
+  ) {
+    try {
+      await this.vSolReceiverService.createStock(body.DATA);
+      const response: HpAPIResponse = {
+        IF_RST_MSG: true,
+        IF_RST_CD: '00',
+      };
+      return res.json(response);
+    } catch (error) {
+      return res.status(HttpStatus.OK).json({
+        IF_RST_MSG: false,
+        IF_RST_CD: '00',
+      } as HpAPIResponse);
+    }
+  }
 }
