@@ -76,4 +76,22 @@ export class BuyService {
       throw error;
     }
   }
+  async update(data: any, keyTrans?: string) {
+    const key = keyTrans ?? (await this.buyRepository.startTransaction());
+    try {
+      const { vin, ...dataUpdate } = data;
+
+      await this.buyRepository.updateEntity(
+        { vin, isDel: false },
+        dataUpdate,
+        key,
+      );
+
+      if (!keyTrans) await this.buyRepository.commitTransaction(key);
+    } catch (error) {
+      if (!keyTrans) await this.buyRepository.rollbackTransaction(key);
+
+      throw error;
+    }
+  }
 }

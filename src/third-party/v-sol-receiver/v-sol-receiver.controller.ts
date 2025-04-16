@@ -68,7 +68,7 @@ export class VSolReceiverController {
     @Res() res: Response,
   ) {
     try {
-      await this.vSolReceiverService.createStock(body.DATA);
+      await this.vSolReceiverService.updateBuy(body.DATA);
       const response: HpAPIResponse = {
         IF_RST_MSG: true,
         IF_RST_CD: '00',

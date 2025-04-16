@@ -1,10 +1,15 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { StockRepository } from 'src/modules/stock/repositories/stock.repository';
 import { HP_ST_001Dto } from '../dto/HP_ST_001.dto';
+import { HP_CT_002Dto } from '../dto/HP_CT_002.dto';
+import { BuyService } from 'src/modules/buy/buy.service';
 
 @Injectable()
 export class VSolReceiverService {
-  constructor(private readonly stockRepository: StockRepository) {}
+  constructor(
+    private readonly stockRepository: StockRepository,
+    private readonly buyService: BuyService,
+  ) {}
 
   // HP_ST_001
   async createStock(data: HP_ST_001Dto) {
@@ -14,6 +19,26 @@ export class VSolReceiverService {
       await this.stockRepository.createEntity(STOCK, key);
       await this.stockRepository.commitTransaction(key);
     } catch (error) {
+      await this.stockRepository.rollbackTransaction(key);
+      throw error;
+    }
+  }
+
+  // HP_CT_002
+  async updateBuy(data: HP_CT_002Dto) {
+    const key = await this.stockRepository.startTransaction();
+    try {
+      const { STOCK, WARRANTY } = data;
+      const dataUpdate = {
+        vin: STOCK.VIN,
+        carRegNo: STOCK.CAR_REG_NO,
+        contNo: STOCK.CONT_NO,
+        statCd: STOCK.STAT_CD,
+      };
+      await this.buyService.update(dataUpdate);
+      await this.stockRepository.commitTransaction(key);
+    } catch (error) {
+      console.log('error', error);
       await this.stockRepository.rollbackTransaction(key);
       throw error;
     }
