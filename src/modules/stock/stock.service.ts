@@ -38,6 +38,7 @@ export class StockService {
     try {
       const { page, pageSize, orderBy, orderDirection, whereCondition } = query;
       const {
+        cho,
         topFilterType,
         vehicleFeatures,
         brands,
@@ -46,11 +47,16 @@ export class StockService {
         yearMax,
         carPriceMin,
         carPriceMax,
+        mileageMin,
+        mileageMax,
+        fuels,
       } = whereCondition;
       let numberPage = pageSize;
       const queryBuilder = this.stockRepository.createQueryBuilder('stock');
       queryBuilder.andWhere('stock.is_del = 0 ');
-
+      if (cho) {
+        queryBuilder.andWhere('stock.CHO = :cho', { cho });
+      }
       if (topFilterType) {
         switch (topFilterType) {
           case 'brand_certified': //브랜드인증중고
@@ -134,6 +140,24 @@ export class StockService {
       }
       if (orderBy) {
         queryBuilder.orderBy(`stock.${orderBy}`, orderDirection || 'ASC');
+      }
+      if (mileageMin) {
+        queryBuilder.andWhere('stock.MILEAGE >= :mileageMin', { mileageMin });
+      }
+      if (mileageMax) {
+        queryBuilder.andWhere('stock.MILEAGE <= :mileageMax', { mileageMax });
+      }
+      if (fuels) {
+        const fuelsArray = fuels.split(',');
+        queryBuilder.andWhere(
+          new Brackets((qb) => {
+            fuelsArray.forEach((fuel, index) => {
+              qb.orWhere(`stock.FUEL LIKE :fuel${index}`, {
+                [`fuel${index}`]: `%${fuel}%`,
+              });
+            });
+          }),
+        );
       }
       queryBuilder.take(numberPage).skip((page - 1) * numberPage);
       const [data, totalCount] = await queryBuilder.getManyAndCount();

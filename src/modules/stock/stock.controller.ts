@@ -23,6 +23,7 @@ export class StockController {
         page,
         pageSize,
       });
+
       return res.status(HttpStatus.OK).json({ success: true, ...stocks });
     } catch (error) {
       if (!res.headersSent) {
