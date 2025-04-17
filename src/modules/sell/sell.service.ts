@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { SellEntity } from './entities/sell.entitiy';
+import { SellEntity } from './entities/sell.entity';
 import { SellRepository } from './repositories/sell.repository';
 import { formatNumber } from './config';
 import { SubVSolSenderService } from 'src/third-party/sub-v-sol-sender/sub-v-sol-sender.service';
-import { SellStatusEnum } from './enums';
 
 @Injectable()
 export class SellService {
@@ -17,27 +16,50 @@ export class SellService {
   async post(body: SellEntity): Promise<SellEntity | Error> {
     const key = await this.sRepo.startTransaction();
     try {
-      // create contract in homepages
-      // const entity = SellEntity.toCreateEntity(body);
-      const entity = new SellEntity();
-      entity.vin = body.vin;
-      entity.status = SellStatusEnum.REGISTERED;
-      entity.evalRegi = body.evalRegi;
-      entity.evalRegiDeta = body.evalRegiDeta;
-      entity.sellPE = body.sellPE;
+      const entity = SellEntity.toCreateEntity(body);
       const create = await this.sRepo.createEntity(entity, key);
-      console.log('chaksd1231131');
       create.contractNo = `KMG-P-${formatNumber(create.id)}`;
-      console.log('qua day chua');
-      await this.sRepo.createEntity(entity, key);
-      console.log('qua day chua roi');
-      // send admin to create purchase
-      await this.sender.HP_CT_003(create);
-      // receiver contract no from admin
-      console.log('test service', create);
+      await this.sRepo.createEntity(create, key);
+
+      const send = await this.sender.HP_CT_003(create);
+      if (send instanceof Error) throw send;
+
       await this.sRepo.commitTransaction(key);
       return create;
     } catch (error) {
+      console.log('error', error);
+      await this.sRepo.rollbackTransaction(key);
+      return error;
+    }
+  }
+
+  async update(id: number, body: SellEntity): Promise<SellEntity | Error> {
+    // return body;
+    const sell = await this.sRepo.getItem({ where: { id: id } });
+    if (!sell) return new Error('sell doest not exist');
+    const key = await this.sRepo.startTransaction();
+    try {
+      let issend = false;
+
+      sell.evalRegi = body.evalRegi;
+      sell.evalRegiDeta = body.evalRegiDeta;
+      sell.sellPE = body.sellPE;
+      if (body.status && sell.status !== body.status) {
+        sell.status = body.status;
+        issend = true;
+      }
+      const update = await this.sRepo.createEntity(sell, key);
+      await this.sRepo.createEntity(update, key);
+
+      if (issend) {
+        const send = await this.sender.HP_CT_003(update);
+        if (send instanceof Error) throw send;
+      }
+
+      await this.sRepo.commitTransaction(key);
+      return update;
+    } catch (error) {
+      console.log('error', error);
       await this.sRepo.rollbackTransaction(key);
       return error;
     }

@@ -2,10 +2,16 @@ import { Injectable } from '@nestjs/common';
 import { CustomerDTO } from './dto/customer';
 import { CustomerEntity } from 'src/modules/customer/entities/customer.entity';
 import { CustomerRepository } from 'src/modules/customer/repositories/customer.repository';
+import { SellDTO } from './dto/sell';
+import { SellRepository } from 'src/modules/sell/repositories/sell.repository';
+import { SellEntity } from 'src/modules/sell/entities/sell.entity';
 
 @Injectable()
 export class SubVSolReceiverService {
-  constructor(private readonly cRepo: CustomerRepository) {}
+  constructor(
+    private readonly cRepo: CustomerRepository,
+    private readonly sRepo: SellRepository,
+  ) {}
 
   async HP_CUST_001(body: CustomerDTO): Promise<CustomerEntity | Error> {
     try {
@@ -33,6 +39,24 @@ export class SubVSolReceiverService {
 
       const post = await this.cRepo.createEntity(customer);
       return post;
+    } catch (error) {
+      return error;
+    }
+  }
+
+  async HP_CT_004(body: SellDTO): Promise<SellEntity | Error> {
+    try {
+      const contract = await this.sRepo.getItem({
+        where: { contractNo: body.contractNo },
+      });
+      if (!contract) throw new Error('contract does not exist');
+      contract.status = body.status;
+      contract.quotePrice = body.quotePrice;
+      contract.repName = body.repName;
+      contract.repPhone = body.repPhone;
+      contract.repTeam = body.repTeam;
+      await this.sRepo.createEntity(contract);
+      return contract;
     } catch (error) {
       return error;
     }

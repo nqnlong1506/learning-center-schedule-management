@@ -1,4 +1,4 @@
-import { SellEntity } from 'src/modules/sell/entities/sell.entitiy';
+import { SellEntity } from 'src/modules/sell/entities/sell.entity';
 import { SellStatusMapping } from '../config';
 export interface Sell {
   contractNo: string;

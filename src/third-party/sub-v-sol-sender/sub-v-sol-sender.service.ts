@@ -5,7 +5,7 @@ import { HttpService } from '@nestjs/axios';
 import { catchError, firstValueFrom } from 'rxjs';
 import { AxiosError } from 'axios';
 import { APIStatus } from 'src/config/api';
-import { SellEntity } from 'src/modules/sell/entities/sell.entitiy';
+import { SellEntity } from 'src/modules/sell/entities/sell.entity';
 import { toSell } from './entities/sell';
 
 @Injectable()

@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { SellPEEnum, SellStatusEnum } from '../enums';
-import { IsEnum, IsNotEmpty, IsString } from 'class-validator';
+import { IsEnum, IsOptional, IsString } from 'class-validator';
 
 @Entity('sells')
 export class SellEntity {
@@ -8,7 +8,7 @@ export class SellEntity {
   id: number;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   @Column({ type: 'varchar', length: 20, comment: 'VIN -	차대번호' })
   vin: string;
 
@@ -20,6 +20,8 @@ export class SellEntity {
   })
   contractNo: string;
 
+  @IsEnum(SellStatusEnum)
+  @IsOptional()
   @Column({
     name: 'status',
     type: 'enum',
@@ -55,6 +57,37 @@ export class SellEntity {
   })
   sellPE: SellPEEnum;
 
+  @Column({
+    name: 'quote_price',
+    type: 'int',
+    comment: 'QUOTE_PRICE - 최종견적가',
+  })
+  quotePrice: number;
+
+  @Column({
+    name: 'rep_name',
+    type: 'varchar',
+    length: 50,
+    comment: 'REP_NM - 담당자명',
+  })
+  repName: string;
+
+  @Column({
+    name: 'rep_phone',
+    type: 'varchar',
+    length: 50,
+    comment: 'REP_PHONE - 담당자 전화번호',
+  })
+  repPhone: string;
+
+  @Column({
+    name: 'rep_team',
+    type: 'varchar',
+    length: 50,
+    comment: 'REP_TEAM - 담당자 소속',
+  })
+  repTeam: string;
+
   @Column({ name: 'created_at', type: 'timestamp' })
   createdAt: Date;
 
@@ -64,10 +97,20 @@ export class SellEntity {
   toJson(): void {}
 
   static toCreateEntity(sell: SellEntity | undefined): SellEntity {
-    if (!sell) return undefined;
+    if (!sell || !sell.vin || sell.vin === '') return undefined;
     const entity = new SellEntity();
     entity.vin = sell.vin;
     entity.status = SellStatusEnum.REGISTERED;
+    entity.evalRegi = sell.evalRegi;
+    entity.evalRegiDeta = sell.evalRegiDeta;
+    entity.sellPE = sell.sellPE;
+    return entity;
+  }
+
+  static toUpdateEntity(sell: SellEntity | undefined): SellEntity {
+    const entity = new SellEntity();
+    entity.contractNo = sell.contractNo;
+    entity.status = sell.status ? sell.status : SellStatusEnum.REGISTERED;
     entity.evalRegi = sell.evalRegi;
     entity.evalRegiDeta = sell.evalRegiDeta;
     entity.sellPE = sell.sellPE;
