@@ -13,6 +13,12 @@ export class SellService {
     private readonly sender: SubVSolSenderService,
   ) {}
 
+  async getById(id: number): Promise<SellEntity | Error> {
+    const sell = await this.sRepo.getItem({ where: { id: id } });
+    if (!sell) return new Error('sell does not exist');
+    return sell;
+  }
+
   async post(body: SellEntity): Promise<SellEntity | Error> {
     const key = await this.sRepo.startTransaction();
     try {
