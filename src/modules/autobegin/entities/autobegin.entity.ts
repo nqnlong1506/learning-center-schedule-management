@@ -23,10 +23,6 @@ export class AutobeginEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  // @OneToOne(() => ProductEntity, (product) => product.autobegin)
-  // @JoinColumn({ name: 'product_id' })
-  // product: ProductEntity;
-
   @IsNumber()
   @Column({ name: 'car_length', type: 'int', nullable: true })
   carLength: number;

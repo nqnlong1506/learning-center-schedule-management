@@ -3,7 +3,6 @@ import { HttpService } from '@nestjs/axios';
 import axios from 'axios';
 import { AutobeginRepository } from './repositories/autobegin.repository';
 import { CreateAutoBeginDto } from './dto/create-atobegin.dto';
-import { AutobeginEntity } from './entities/autobegin.entity';
 import { convertToCamelCase, recursiveParseJson } from 'src/utils/helper';
 import { AutobeginMileagePriceRepository } from './repositories/autobegin-mileageprice.repository';
 import { AutobeginOptlistTableRepository } from './repositories/autobegin-oplist-table.repository';
@@ -77,119 +76,114 @@ export class AutobeginService {
     }
   }
 
-  // async createAutobegin(data: any, keyTrans?: string): Promise<any> {
-  //   const key = keyTrans ?? (await this.autobeginRepository.startTransaction());
-  //   try {
-  //     let {
-  //       usedprice,
-  //       mileageprice,
-  //       repairlist,
-  //       tsKey,
-  //       modellist,
-  //       seloptlist,
-  //       product,
-  //       cardata,
-  //     } = data;
+  async createAutobegin(data: any, keyTrans?: string): Promise<any> {
+    const key = keyTrans ?? (await this.autobeginRepository.startTransaction());
+    try {
+      const {
+        usedprice,
+        mileageprice,
+        repairlist,
+        tsKey,
+        modellist,
+        seloptlist,
+        product,
+      } = data;
+      let { cardata } = data;
 
-  //     cardata = convertToCamelCase(cardata);
+      cardata = convertToCamelCase(cardata);
 
-  //     const autobeginData = Object.assign(new CreateAutoBeginDto(), {
-  //       ...cardata,
-  //       optionMemo: cardata?.optionMemo
-  //         ? JSON.stringify(cardata.optionMemo)
-  //         : null,
-  //       repairlist: repairlist ? JSON.stringify(repairlist) : null,
-  //       tsKey: tsKey ? JSON.stringify(tsKey) : null,
-  //       modellist: modellist ? JSON.stringify(modellist) : null,
-  //       product: product,
-  //     });
+      const autobeginData = Object.assign(new CreateAutoBeginDto(), {
+        ...cardata,
+        optionMemo: cardata?.optionMemo
+          ? JSON.stringify(cardata.optionMemo)
+          : null,
+        repairlist: repairlist ? JSON.stringify(repairlist) : null,
+        tsKey: tsKey ? JSON.stringify(tsKey) : null,
+        modellist: modellist ? JSON.stringify(modellist) : null,
+        product: product,
+      });
 
-  //     const autobegin = await this.autobeginRepository.createEntity(
-  //       autobeginData,
-  //       key,
-  //     );
+      const autobegin = await this.autobeginRepository.createEntity(
+        autobeginData,
+        key,
+      );
 
-  //     if (Array.isArray(cardata?.optlist)) {
-  //       for (let item of cardata.optlist) {
-  //         await this.autobeginOptlistTableRepository.createEntity(
-  //           {
-  //             autobegin: autobegin,
-  //             product: product,
-  //             price: item.price,
-  //             name: item.name,
-  //           },
-  //           key,
-  //         );
-  //       }
-  //     }
+      if (Array.isArray(cardata?.optlist)) {
+        for (const item of cardata.optlist) {
+          await this.autobeginOptlistTableRepository.createEntity(
+            {
+              autobegin: autobegin,
+              price: item.price,
+              name: item.name,
+            },
+            key,
+          );
+        }
+      }
 
-  //     if (Array.isArray(cardata?.optionTable)) {
-  //       for (let item of cardata.optionTable) {
-  //         await this.autobeginOptionTableRepository.createEntity(
-  //           {
-  //             autobegin: autobegin,
-  //             product: product,
-  //             optionKey1: item.optionKey1,
-  //             optionKey2: item.optionKey2,
-  //             optionKey3: item.optionKey3,
-  //             optionFlag: item.optionFlag,
-  //           },
-  //           key,
-  //         );
-  //       }
-  //     }
+      if (Array.isArray(cardata?.optionTable)) {
+        for (const item of cardata.optionTable) {
+          await this.autobeginOptionTableRepository.createEntity(
+            {
+              autobegin: autobegin,
+              optionKey1: item.optionKey1,
+              optionKey2: item.optionKey2,
+              optionKey3: item.optionKey3,
+              optionFlag: item.optionFlag,
+            },
+            key,
+          );
+        }
+      }
 
-  //     if (Array.isArray(usedprice)) {
-  //       for (let item of usedprice) {
-  //         await this.autobeginUsedPriceRepository.createEntity(
-  //           {
-  //             autobegin: autobegin,
-  //             product: product,
-  //             price: item.price,
-  //             stdym: item.stdym,
-  //             rate: item.rate,
-  //             rvalue: item.rvalue,
-  //           },
-  //           key,
-  //         );
-  //       }
-  //     }
+      if (Array.isArray(usedprice)) {
+        for (const item of usedprice) {
+          await this.autobeginUsedPriceRepository.createEntity(
+            {
+              autobegin: autobegin,
+              price: item.price,
+              stdym: item.stdym,
+              rate: item.rate,
+              rvalue: item.rvalue,
+            },
+            key,
+          );
+        }
+      }
 
-  //     if (Array.isArray(mileageprice)) {
-  //       for (let item of mileageprice) {
-  //         await this.autobeginMileagePriceRepository.createEntity(
-  //           {
-  //             autobegin: autobegin,
-  //             product: product,
-  //             price: item.price,
-  //             mileage: item.mileage,
-  //           },
-  //           key,
-  //         );
-  //       }
-  //     }
+      if (Array.isArray(mileageprice)) {
+        for (const item of mileageprice) {
+          await this.autobeginMileagePriceRepository.createEntity(
+            {
+              autobegin: autobegin,
+              price: item.price,
+              mileage: item.mileage,
+            },
+            key,
+          );
+        }
+      }
 
-  //     if (Array.isArray(seloptlist)) {
-  //       for (let item of seloptlist) {
-  //         await this.autobeginSeloptListRepository.createEntity(
-  //           {
-  //             autobegin: autobegin,
-  //             product: product,
-  //             price: item.optprice,
-  //             name: item.optname,
-  //           },
-  //           key,
-  //         );
-  //       }
-  //     }
+      if (Array.isArray(seloptlist)) {
+        for (const item of seloptlist) {
+          await this.autobeginSeloptListRepository.createEntity(
+            {
+              autobegin: autobegin,
+              price: item.optprice,
+              name: item.optname,
+            },
+            key,
+          );
+        }
+      }
 
-  //     if (!keyTrans) await this.autobeginRepository.commitTransaction(key);
-  //   } catch (error: any) {
-  //     if (!keyTrans) await this.autobeginRepository.rollbackTransaction(key);
+      if (!keyTrans) await this.autobeginRepository.commitTransaction(key);
+    } catch (error: any) {
+      if (!keyTrans) await this.autobeginRepository.rollbackTransaction(key);
 
-  //     throw error;
-  //   }
-  // }
+      throw error;
+    }
+  }
   // async getPriceInformation(productId: number): Promise<any> {
   //   const data = await this.autobeginRepository.findOne({
   //     where: {
@@ -210,6 +204,19 @@ export class AutobeginService {
   //     usedprice: usedprice,
   //   };
   // }
+
+  async create(carNum: string, owner: string, keyTrans?: string) {
+    const key = keyTrans ?? (await this.autobeginRepository.startTransaction());
+    try {
+      const data = await this.searchCar({ carNum, owner });
+      await this.createAutobegin(data, key);
+      // save log
+      if (!keyTrans) await this.autobeginRepository.commitTransaction(key);
+    } catch (error) {
+      if (!keyTrans) await this.autobeginRepository.rollbackTransaction(key);
+      throw error;
+    }
+  }
 
   async get(where: Record<string, any>): Promise<any> {
     try {

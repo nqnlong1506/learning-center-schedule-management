@@ -19,6 +19,9 @@ export class HP_ST_001_STOCK_Dto {
   CAR_REG_NO: string;
 
   @IsString()
+  OWNER: string;
+
+  @IsString()
   MODELNAME: string;
 
   @IsString()

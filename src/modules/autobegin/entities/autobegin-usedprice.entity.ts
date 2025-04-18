@@ -16,10 +16,6 @@ export class AutobeginUsedPriceEntity {
   @PrimaryGeneratedColumn({ name: 'id' })
   id: number;
 
-  // @ManyToOne(() => ProductEntity, (product) => product.usedprice)
-  // @JoinColumn({ name: 'product_id' })
-  // product: ProductEntity;
-
   @ManyToOne(() => AutobeginEntity, (autobegin) => autobegin.usedprice)
   @JoinColumn({ name: 'autobegin_id' })
   autobegin: AutobeginEntity;

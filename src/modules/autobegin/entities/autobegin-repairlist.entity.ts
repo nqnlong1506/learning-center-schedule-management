@@ -19,10 +19,6 @@ export class AutobeginRepairListEntity {
   @PrimaryGeneratedColumn({ name: 'id' })
   id: number;
 
-  // @ManyToOne(() => ProductEntity, (product) => product.repairList)
-  // @JoinColumn({ name: 'product_id' })
-  // product: ProductEntity;
-
   @ManyToOne(() => AutobeginEntity, (autobegin) => autobegin.repairList)
   @JoinColumn({ name: 'autobegin_id' })
   autobegin: AutobeginEntity;

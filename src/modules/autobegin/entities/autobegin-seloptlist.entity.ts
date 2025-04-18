@@ -16,10 +16,6 @@ export class AutobeginSeloptListEntity {
   @PrimaryGeneratedColumn({ name: 'id' })
   id: number;
 
-  // @ManyToOne(() => ProductEntity, (product) => product.seloptList)
-  // @JoinColumn({ name: 'product_id' })
-  // product: ProductEntity;
-
   @ManyToOne(() => AutobeginEntity, (autobegin) => autobegin.seloptList)
   @JoinColumn({ name: 'autobegin_id' })
   autobegin: AutobeginEntity;

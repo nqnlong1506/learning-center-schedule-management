@@ -16,10 +16,6 @@ export class AutobeginOptionTableEntity {
   @PrimaryGeneratedColumn({ name: 'id' })
   id: number;
 
-  // @ManyToOne(() => ProductEntity, (product) => product.optionTable)
-  // @JoinColumn({ name: 'product_id' })
-  // product: ProductEntity;
-
   @ManyToOne(() => AutobeginEntity, (autobegin) => autobegin.optionTable)
   @JoinColumn({ name: 'autobegin_id' })
   autobegin: AutobeginEntity;
