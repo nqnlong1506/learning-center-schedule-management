@@ -3,6 +3,7 @@ import { CustomerDTO } from './dto/customer';
 import { Response } from 'express';
 import { SubVSolReceiverService } from './sub-v-sol-receiver.service';
 import { ThirdAPIResponse } from 'src/config/api';
+import { SellDTO } from './dto/sell';
 
 @Controller('sub-v-sol-receiver')
 export class SubVSolReceiverController {
@@ -22,6 +23,25 @@ export class SubVSolReceiverController {
       IF_RST_CD: '00',
       IF_RST_MSG: 'SUCCESS',
       CUST_NO: cust001.no,
+    };
+    return res.json(response);
+  }
+
+  @Post('hp_ct_004')
+  async HP_CT_004(@Body() body: SellDTO, @Res() res: Response) {
+    const ct004 = await this.rcvService.HP_CT_004(body);
+    if (ct004 instanceof Error) {
+      const response: ThirdAPIResponse = {
+        IF_RST_CD: '99',
+        IF_RST_MSG: 'FAILED',
+        message: ct004.message,
+      };
+      return res.json(response);
+    }
+    const response: ThirdAPIResponse = {
+      IF_RST_CD: '00',
+      IF_RST_MSG: 'SUCCESS',
+      CONT_NO: ct004.contractNo,
     };
     return res.json(response);
   }

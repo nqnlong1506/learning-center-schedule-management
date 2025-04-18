@@ -5,6 +5,8 @@ import { HttpService } from '@nestjs/axios';
 import { catchError, firstValueFrom } from 'rxjs';
 import { AxiosError } from 'axios';
 import { APIStatus } from 'src/config/api';
+import { SellEntity } from 'src/modules/sell/entities/sell.entity';
+import { toSell } from './entities/sell';
 
 @Injectable()
 export class SubVSolSenderService {
@@ -30,6 +32,30 @@ export class SubVSolSenderService {
       if (!APIStatus[status] || !data || data?.IF_RST_CD !== '00')
         throw new Error(data?.IF_RST_MSG || 'error');
       console.log('[HP_CUST_001 - sender]', data);
+    } catch (error) {
+      return error;
+    }
+  }
+
+  async HP_CT_003(sell: SellEntity): Promise<void | Error> {
+    try {
+      const body = toSell(sell);
+      const { status, data } = await firstValueFrom(
+        this.httpService
+          .post(`${this.V_SOL_URL}/hp_ct_003`, body, {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          })
+          .pipe(
+            catchError((error: AxiosError) => {
+              throw new Error(error.message);
+            }),
+          ),
+      );
+      if (!APIStatus[status] || !data || data?.IF_RST_CD !== '00')
+        throw new Error(data?.IF_RST_MSG || 'error');
+      console.log('[HP_CT_003 - sender]', data);
     } catch (error) {
       return error;
     }

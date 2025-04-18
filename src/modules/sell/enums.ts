@@ -1,8 +1,10 @@
 export enum SellStatusEnum {
-  INQUIRY = '01',
-  DIAGONOSTIC_EVALUATION = '02',
-  SALES_REQUEST = '03',
-  CANCEL = '04',
+  FAILED = '00',
+  REGISTERED = '01',
+  ESTIMATE_QUOTE = '02',
+  INSPECTION = '03',
+  FINAL_ESTIMATE = '04',
+  COMPLETE = '05',
 }
 
 export enum SellPEEnum {
