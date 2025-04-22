@@ -43,13 +43,13 @@ export class BuyService {
   public async create(data: any, keyTrans?: string): Promise<any> {
     const key = keyTrans ?? (await this.buyRepository.startTransaction());
     try {
-      await this.buyRepository.createEntity(data, key);
+      const buy = await this.buyRepository.createEntity(data, key);
       //send HP_CT_001
       const dataSend: HP_CT_001Dto = {
         STOCK: {
           VIN: data?.vin,
           CAR_REG_NO: data?.carRegNo,
-          CONT_NO: data?.contNo,
+          // CONT_NO: data?.contNo,
           STAT_CD: data?.statCd,
           DE_ME: data?.deMe,
           DE_ZIP_NO: data?.deZipNo,
@@ -68,7 +68,17 @@ export class BuyService {
         CUST: data.cust,
         WARRANTY: data.warranty,
       };
-      await this.vSolSenderService.handleHPCT001(dataSend);
+      const dataResponse = await this.vSolSenderService.handleHPCT001(dataSend);
+      if (dataResponse?.IF_RST_CD == '00') {
+        await this.buyRepository.updateEntity(
+          { id: buy.id },
+          {
+            contNo: dataResponse.CONT_NO,
+            virtlAcctNo: dataResponse.VIRTL_ACCT_NO,
+          },
+          key,
+        );
+      }
       if (!keyTrans) await this.buyRepository.commitTransaction(key);
       return true;
     } catch (error) {

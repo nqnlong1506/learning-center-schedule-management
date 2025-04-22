@@ -44,6 +44,7 @@ export class VSolReceiverController {
     @Res() res: Response,
   ) {
     try {
+      console.log('hp_st_001', body);
       await this.vSolReceiverService.createStock(body.DATA);
       const response: HpAPIResponse = {
         IF_RST_MSG: true,
@@ -51,6 +52,7 @@ export class VSolReceiverController {
       };
       return res.json(response);
     } catch (error) {
+      console.log(error);
       return res.status(HttpStatus.OK).json({
         IF_RST_MSG: false,
         IF_RST_CD: '00',

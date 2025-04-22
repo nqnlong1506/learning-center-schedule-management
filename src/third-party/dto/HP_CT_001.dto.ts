@@ -31,8 +31,8 @@ export class HP_CT_001_STOCK_Dto {
   @IsString()
   CAR_REG_NO: string;
 
-  @IsString()
-  CONT_NO: string;
+  // @IsString()
+  // CONT_NO: string;
 
   @IsString()
   STAT_CD: string;

@@ -49,9 +49,9 @@ export class VSolSenderService {
         this.V_SOL_URL + '/homepage/hp-ct-001',
         postData,
       );
-      return true;
-
-      // const res = response.data;
+      console.log('response hp-ct-001', response);
+      const res = response.data;
+      return res;
       // return this.handleHomepageResponse(DATA, res);
     } catch (error) {
       console.error('Error sending HP_CT_001:', error);

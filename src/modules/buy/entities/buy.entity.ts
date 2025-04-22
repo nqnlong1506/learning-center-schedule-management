@@ -25,6 +25,15 @@ export class BuyEntity {
   contNo: string;
 
   @IsString()
+  @Column({
+    name: 'virtl_acct_no',
+    type: 'varchar',
+    length: 100,
+    nullable: true,
+  })
+  virtlAcctNo: string;
+
+  @IsString()
   @Column({ name: 'stat_cd', type: 'varchar', length: 100, nullable: true })
   statCd: string;
 

@@ -19,6 +19,7 @@ export class VSolReceiverService {
     const key = keyTrans ?? (await this.stockRepository.startTransaction());
     try {
       const { STOCK, WARRANTY } = data;
+      console.log('createStock', STOCK, WARRANTY);
       await this.stockRepository.createEntity(STOCK, key);
       //call autobegins
       await this.createAutobegins(STOCK.CAR_REG_NO, STOCK.OWNER, key);
