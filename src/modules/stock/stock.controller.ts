@@ -34,4 +34,28 @@ export class StockController {
       }
     }
   }
+
+  @Get('view')
+  async getById(@Query('id') id: string, @Res() res: Response) {
+    try {
+      const stock = await this.stockServices.getById(id);
+
+      if (!stock) {
+        return res.status(HttpStatus.NOT_FOUND).json({
+          success: false,
+          message: 'Stock not found',
+        });
+      }
+
+      return res.status(HttpStatus.OK).json({
+        success: true,
+        data: stock,
+      });
+    } catch (error) {
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  }
 }
