@@ -1,7 +1,7 @@
 import { Body, Controller, Get, HttpStatus, Post, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { BuyService } from './buy.service';
-import { CurrentUser } from 'src/decorators/current-user.decorator';
+import { CurrentCustomer } from 'src/decorators/current-user.decorator';
 
 @Controller('buy')
 export class BuyController {
@@ -37,7 +37,7 @@ export class BuyController {
   @Post()
   async gets(
     @Body() body: Record<string, any>,
-    @CurrentUser() user: any,
+    @CurrentCustomer() user: any,
     @Res() res: Response,
   ) {
     try {

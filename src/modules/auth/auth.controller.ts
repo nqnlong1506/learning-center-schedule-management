@@ -21,7 +21,7 @@ export class AuthController {
       const response: APIResponse = {
         success: false,
         data: undefined,
-        message: '[login] id & password needed.',
+        message: '[auth - login] id & password needed.',
       };
       return res.json(response);
     }
@@ -34,13 +34,13 @@ export class AuthController {
       const response: APIResponse = {
         success: false,
         data: undefined,
-        message: `[auth - login] ${login.message}`,
+        message: `[auth - login] ${login.message}.`,
       };
       return res.json(response);
     }
 
     const now = Date.now();
-    const user = {
+    const customer = {
       no: login.no,
       id: login.id,
       name: login.name,
@@ -48,13 +48,13 @@ export class AuthController {
       isDel: login.isDel,
     };
     const payload = {
-      user,
+      customer,
       expiry: now + this.ACCESS_TIME,
     };
     const token = await this.jwtService.signAsync(payload);
 
     const refreshPayload = {
-      user,
+      customer,
       expiry: now + this.REFRESH_TIME,
     };
     const refreshToken = await this.jwtService.signAsync(refreshPayload);
@@ -62,7 +62,7 @@ export class AuthController {
     const response: APIResponse = {
       success: true,
       data: {
-        user,
+        customer,
         token,
         refreshToken,
       },

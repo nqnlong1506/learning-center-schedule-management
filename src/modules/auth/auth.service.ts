@@ -2,10 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { CustomerRepository } from '../customer/repositories/customer.repository';
 import { checkPassword } from 'src/utils/password';
 import { CustomerEntity } from '../customer/entities/customer.entity';
+import { YesNoEnum } from 'src/config/enums/yesno';
 
 @Injectable()
 export class AuthService {
   constructor(private readonly cRepo: CustomerRepository) {}
+
+  async isExistingCustomer(no: number): Promise<boolean> {
+    return await this.cRepo.exists({ where: { no: no, isDel: YesNoEnum.NO } });
+  }
 
   async login(id: string, password: string): Promise<CustomerEntity | Error> {
     try {
@@ -18,7 +23,6 @@ export class AuthService {
       if (!checkPassword(password, customer.password))
         throw new Error('incorrect password');
       customer.toJson();
-
       return customer;
     } catch (error) {
       return error;

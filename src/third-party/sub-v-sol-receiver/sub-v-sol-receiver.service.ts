@@ -61,4 +61,36 @@ export class SubVSolReceiverService {
       return error;
     }
   }
+
+  async HP_BO_001(body: any): Promise<void | Error> {
+    try {
+      console.log('[HP_BO_001 - receiver]', body);
+    } catch (error) {
+      return error;
+    }
+  }
+
+  async HP_BO_002(body: any): Promise<void | Error> {
+    try {
+      console.log('[HP_BO_002 - receiver]', body);
+    } catch (error) {
+      return error;
+    }
+  }
+
+  async HP_BO_003(body: any): Promise<void | Error> {
+    try {
+      console.log('[HP_BO_003 - receiver]', body);
+    } catch (error) {
+      return error;
+    }
+  }
+
+  async HP_BO_004(body: any): Promise<void | Error> {
+    try {
+      console.log('[HP_BO_004 - receiver]', body);
+    } catch (error) {
+      return error;
+    }
+  }
 }

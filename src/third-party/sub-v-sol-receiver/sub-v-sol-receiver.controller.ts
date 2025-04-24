@@ -45,4 +45,76 @@ export class SubVSolReceiverController {
     };
     return res.json(response);
   }
+
+  @Post('hp_bo_001')
+  async HP_BO_001(@Body() body: any, @Res() res: Response) {
+    const bo001 = await this.rcvService.HP_BO_001(body);
+    if (bo001 instanceof Error) {
+      const response: ThirdAPIResponse = {
+        IF_RST_CD: '99',
+        IF_RST_MSG: 'FAILED',
+        message: bo001.message,
+      };
+      return res.json(response);
+    }
+    const response: ThirdAPIResponse = {
+      IF_RST_CD: '00',
+      IF_RST_MSG: 'SUCCESS',
+    };
+    return res.json(response);
+  }
+
+  @Post('hp_bo_002')
+  async HP_BO_002(@Body() body: any, @Res() res: Response) {
+    const bo002 = await this.rcvService.HP_BO_002(body);
+    if (bo002 instanceof Error) {
+      const response: ThirdAPIResponse = {
+        IF_RST_CD: '99',
+        IF_RST_MSG: 'FAILED',
+        message: bo002.message,
+      };
+      return res.json(response);
+    }
+    const response: ThirdAPIResponse = {
+      IF_RST_CD: '00',
+      IF_RST_MSG: 'SUCCESS',
+    };
+    return res.json(response);
+  }
+
+  @Post('hp_bo_003')
+  async HP_BO_003(@Body() body: any, @Res() res: Response) {
+    const bo003 = await this.rcvService.HP_BO_003(body);
+    if (bo003 instanceof Error) {
+      const response: ThirdAPIResponse = {
+        IF_RST_CD: '99',
+        IF_RST_MSG: 'FAILED',
+        message: bo003.message,
+      };
+      return res.json(response);
+    }
+    const response: ThirdAPIResponse = {
+      IF_RST_CD: '00',
+      IF_RST_MSG: 'SUCCESS',
+    };
+    return res.json(response);
+  }
+
+  @Post('hp_bo_004')
+  async HP_BO_004(@Body() body: any, @Res() res: Response) {
+    const bo004 = await this.rcvService.HP_BO_004(body);
+    if (bo004 instanceof Error) {
+      const response: ThirdAPIResponse = {
+        IF_RST_CD: '99',
+        IF_RST_MSG: 'FAILED',
+        message: bo004.message,
+      };
+      return res.json(response);
+    }
+    const response: ThirdAPIResponse = {
+      IF_RST_CD: '00',
+      IF_RST_MSG: 'SUCCESS',
+    };
+    return res.json(response);
+  }
 }
