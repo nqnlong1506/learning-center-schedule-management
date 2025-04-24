@@ -5,6 +5,7 @@ import { HP_CT_002Dto } from '../dto/HP_CT_002.dto';
 import { BuyService } from 'src/modules/buy/buy.service';
 import { CarHistoryModule } from 'src/modules/car-history/car-history.module';
 import { CarHistoryService } from 'src/modules/car-history/services/car-history.service';
+import { Equal } from 'typeorm';
 
 @Injectable()
 export class VSolReceiverService {
@@ -20,7 +21,19 @@ export class VSolReceiverService {
     try {
       const { STOCK, WARRANTY } = data;
       console.log('createStock', STOCK, WARRANTY);
-      await this.stockRepository.createEntity(STOCK, key);
+      const existStock = await this.stockRepository.findOne({
+        where: { VIN: STOCK.VIN, isDel: false },
+      });
+
+      if (existStock) {
+        await this.stockRepository.updateEntity(
+          { id: Equal(existStock.id) },
+          STOCK,
+          key,
+        );
+      } else {
+        await this.stockRepository.createEntity(STOCK, key);
+      }
       //call autobegins
       await this.createAutobegins(STOCK.CAR_REG_NO, STOCK.OWNER, key);
 

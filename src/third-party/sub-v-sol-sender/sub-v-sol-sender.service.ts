@@ -11,7 +11,8 @@ import { toSell } from './entities/sell';
 @Injectable()
 export class SubVSolSenderService {
   constructor(private readonly httpService: HttpService) {}
-  V_SOL_URL = process.env.V_SOL_BASE_URL_DEV || 'localhost:3000';
+  V_SOL_URL =
+    process.env.V_SOL_BASE_URL_DEV + '/api/h-p-receiver' || 'localhost:3000';
 
   async HP_CUST_001(customer: CustomerEntity): Promise<void | Error> {
     try {

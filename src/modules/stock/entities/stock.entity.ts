@@ -119,6 +119,10 @@ export class StockEntity {
   CAR_PRO: string;
 
   @IsString()
+  @Column({ name: 'car_vis', type: 'varchar', length: 100, nullable: true })
+  CAR_VIS: string;
+
+  @IsString()
   @Column({ name: 'rep_nm', type: 'varchar', length: 100, nullable: true })
   REP_NM: string;
 

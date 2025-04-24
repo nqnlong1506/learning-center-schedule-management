@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { BuyRepository } from './repositories/stock.repository';
 import { HP_CT_001Dto } from 'src/third-party/dto/HP_CT_001.dto';
 import { VSolSenderService } from 'src/third-party/v-sol-sender/v-sol-sender.service';
+import { Not } from 'typeorm';
 
 @Injectable()
 export class BuyService {
@@ -40,17 +41,32 @@ export class BuyService {
     }
   }
 
-  public async create(data: any, keyTrans?: string): Promise<any> {
+  public async create(
+    data: any,
+    userBuy: any,
+    keyTrans?: string,
+  ): Promise<any> {
     const key = keyTrans ?? (await this.buyRepository.startTransaction());
     try {
+      const checkOwner = await this.buyRepository.findOne({
+        where: { vin: data.vin, isDel: false, buyerNo: Not(userBuy.no) },
+      });
+      if (!checkOwner) {
+        throw new Error('The car has been sold to someone else.');
+      }
+      const exists = await this.buyRepository.findOne({
+        where: { vin: data.vin, isDel: false, buyerNo: userBuy.no },
+      });
+      if (exists) {
+        throw new Error('The car has been sold to you');
+      }
       const buy = await this.buyRepository.createEntity(data, key);
       //send HP_CT_001
       const dataSend: HP_CT_001Dto = {
         STOCK: {
           VIN: data?.vin,
           CAR_REG_NO: data?.carRegNo,
-          // CONT_NO: data?.contNo,
-          STAT_CD: data?.statCd,
+          STAT_CD: '01',
           DE_ME: data?.deMe,
           DE_ZIP_NO: data?.deZipNo,
           DE_ADDR: data?.deAddr,

@@ -1,6 +1,7 @@
 import { Body, Controller, Get, HttpStatus, Post, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { BuyService } from './buy.service';
+import { CurrentUser } from 'src/decorators/current-user.decorator';
 
 @Controller('buy')
 export class BuyController {
@@ -34,9 +35,14 @@ export class BuyController {
   //   }
   // }
   @Post()
-  async gets(@Body() body: Record<string, any>, @Res() res: Response) {
+  async gets(
+    @Body() body: Record<string, any>,
+    @CurrentUser() user: any,
+    @Res() res: Response,
+  ) {
     try {
-      const buy = await this.buyService.create(body);
+      console.log('user12312313', user);
+      const buy = await this.buyService.create(body, user);
       return res.status(HttpStatus.OK).json({ success: true, ...buy });
     } catch (error) {
       return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({

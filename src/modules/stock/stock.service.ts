@@ -54,6 +54,7 @@ export class StockService {
       let numberPage = pageSize;
       const queryBuilder = this.stockRepository.createQueryBuilder('stock');
       queryBuilder.andWhere('stock.is_del = 0 ');
+      queryBuilder.andWhere('stock.car_vis = "Y" ');
       if (cho) {
         queryBuilder.andWhere('stock.CHO = :cho', { cho });
       }

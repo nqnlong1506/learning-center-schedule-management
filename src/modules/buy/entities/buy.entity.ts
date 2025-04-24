@@ -1,4 +1,4 @@
-import { IsBoolean, IsDate, IsString } from 'class-validator';
+import { IsBoolean, IsDate, IsNumber, IsString } from 'class-validator';
 import {
   Column,
   CreateDateColumn,
@@ -11,6 +11,10 @@ import {
 export class BuyEntity {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @IsNumber()
+  @Column({ name: 'buyer_no', type: 'int' })
+  buyerNo: number;
 
   @IsString()
   @Column({ name: 'vin', type: 'varchar', length: 100, nullable: true })
