@@ -162,6 +162,8 @@ export class StockService {
       }
       queryBuilder.take(numberPage).skip((page - 1) * numberPage);
       const [data, totalCount] = await queryBuilder.getManyAndCount();
+      console.log(data);
+
       const processedData = data.map((item) => {
         if (item.CAR_FEAT) {
           return {
@@ -183,6 +185,28 @@ export class StockService {
       };
     } catch (error) {
       throw error;
+    }
+  }
+  async getById(id: string): Promise<any> {
+    try {
+      const queryBuilder = this.stockRepository.createQueryBuilder('stock');
+
+      queryBuilder.where('stock.id = :id', { id }).andWhere('stock.is_del = 0');
+
+      const stock = await queryBuilder.getOne();
+
+      if (!stock) {
+        return null;
+      }
+      if (stock.CAR_FEAT) {
+        return {
+          ...stock,
+          vehicleFeatures: this.convertFeatureStringToArray(stock.CAR_FEAT),
+        };
+      }
+      return stock;
+    } catch (error) {
+      throw new Error(`Failed to get stock by id: ${error.message}`);
     }
   }
 }

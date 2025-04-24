@@ -17,6 +17,7 @@ export class SubVSolSenderService {
   async HP_CUST_001(customer: CustomerEntity): Promise<void | Error> {
     try {
       const body = toCustomer(customer);
+      console.log('body', body);
       const { status, data } = await firstValueFrom(
         this.httpService
           .post(`${this.V_SOL_URL}/hp_cust_001`, body, {
