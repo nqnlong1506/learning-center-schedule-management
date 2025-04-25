@@ -5,13 +5,13 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request, Response, NextFunction } from 'express';
-// import { AuthService } from 'src/modules/auth/auth.service';
+import { AuthService } from 'src/modules/auth/auth.service';
 
 @Injectable()
 export class AuthMiddleware implements NestMiddleware {
   constructor(
     private readonly jwtService: JwtService,
-    // private readonly authService: AuthService,
+    private readonly authService: AuthService,
   ) {}
 
   async use(req: Request, res: Response, next: NextFunction) {
@@ -25,14 +25,14 @@ export class AuthMiddleware implements NestMiddleware {
       }
       const token = str[1];
       const payload = await this.jwtService.verifyAsync(token);
-      const user = payload['user'];
-      if (!user['no'] || !Number(user['no'])) {
-        throw new Error('User does not provided');
+      const customer = payload['customer'];
+      if (!customer['no'] || !Number(customer['no'])) {
+        throw new Error('customer does not provided');
       }
-      // const isExist = await this.authService.isExistingUser(user['no']);
-      // if (!isExist) {
-      //   throw new Error('User does not provided');
-      // }
+      const isExist = await this.authService.isExistingCustomer(customer['no']);
+      if (!isExist) {
+        throw new Error('customer does not provided');
+      }
 
       const now = Date.now();
       const expiry = payload['expiry'];
@@ -40,9 +40,9 @@ export class AuthMiddleware implements NestMiddleware {
         throw new Error('Session expired');
       }
 
-      req['user_id'] = user['id'];
-      req['user_no'] = user['no'];
-      req['user_name'] = user['name'];
+      req['customer_id'] = customer['id'];
+      req['customer_no'] = customer['no'];
+      req['customer_name'] = customer['name'];
       next();
     } catch (error) {
       throw new UnauthorizedException(error.message);

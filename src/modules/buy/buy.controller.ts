@@ -1,7 +1,7 @@
 import { Body, Controller, Get, HttpStatus, Post, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { BuyService } from './buy.service';
-import { CurrentCustomer } from 'src/decorators/current-user.decorator';
+import { CurrentCustomer } from 'src/decorators/current-customer.decorator';
 
 @Controller('buy')
 export class BuyController {

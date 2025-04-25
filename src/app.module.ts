@@ -24,16 +24,16 @@ export class AppModule {
     consumer
       .apply(AppMiddleware)
       .forRoutes({ path: '*', method: RequestMethod.ALL });
-    // consumer
-    //   .apply(AuthMiddleware)
-    //   .exclude(
-    //     { path: 'auth/login', method: RequestMethod.POST },
-    //     { path: 'auth/refresh-token', method: RequestMethod.POST },
-    //     { path: 'auth/register', method: RequestMethod.POST },
-    //     { path: 'file/preview/(.*)', method: RequestMethod.GET },
-    //     { path: 'file/download/(.*)', method: RequestMethod.GET },
-    //     { path: 'v-sol-receiver/(.*)', method: RequestMethod.ALL },
-    //   )
-    //   .forRoutes('*');
+    consumer
+      .apply(AuthMiddleware)
+      .exclude(
+        { path: 'auth/login', method: RequestMethod.POST },
+        { path: 'auth/refresh-token', method: RequestMethod.POST },
+        { path: 'auth/register', method: RequestMethod.POST },
+        { path: 'file/preview/(.*)', method: RequestMethod.GET },
+        { path: 'file/download/(.*)', method: RequestMethod.GET },
+        { path: 'v-sol-receiver/(.*)', method: RequestMethod.ALL },
+      )
+      .forRoutes('*');
   }
 }
