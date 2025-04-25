@@ -31,6 +31,7 @@ export class SellEntity {
   status: SellStatusEnum;
 
   @IsString()
+  @IsOptional()
   @Column({
     name: 'eval_regi',
     type: 'varchar',
@@ -40,6 +41,7 @@ export class SellEntity {
   evalRegi: string;
 
   @IsString()
+  @IsOptional()
   @Column({
     name: 'eval_regi_deta',
     type: 'varchar',
@@ -49,6 +51,7 @@ export class SellEntity {
   evalRegiDeta: string;
 
   @IsEnum(SellPEEnum)
+  @IsOptional()
   @Column({
     name: 'sell_pe',
     type: 'enum',
