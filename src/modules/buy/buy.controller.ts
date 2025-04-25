@@ -5,6 +5,7 @@ import {
   HttpStatus,
   Param,
   Post,
+  Put,
   Query,
   Res,
 } from '@nestjs/common';
@@ -77,7 +78,20 @@ export class BuyController {
   ) {
     try {
       const buy = await this.buyService.create(body, customer);
-      return res.status(HttpStatus.OK).json({ success: true, ...buy });
+      return res.status(HttpStatus.OK).json({ success: true, data: buy });
+    } catch (error) {
+      return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+        message: error.message,
+        success: false,
+      });
+    }
+  }
+
+  @Put()
+  async update(@Body() body: Record<string, any>, @Res() res: Response) {
+    try {
+      await this.buyService.update(body);
+      return res.status(HttpStatus.OK).json({ success: true });
     } catch (error) {
       return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
         message: error.message,
