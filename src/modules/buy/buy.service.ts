@@ -16,12 +16,23 @@ export class BuyService {
     page: number;
     pageSize: number;
     whereCondition: Record<string, any>;
+    customer: any;
   }): Promise<any> {
     try {
-      const { page, pageSize, orderBy, orderDirection, whereCondition } = query;
+      const {
+        page,
+        pageSize,
+        orderBy,
+        orderDirection,
+        whereCondition,
+        customer,
+      } = query;
       console.log('whereCondition', whereCondition);
       const numberPage = pageSize;
       const queryBuilder = this.buyRepository.createQueryBuilder('stock');
+      queryBuilder.andWhere('stock.buyerNo = :buyerNo', {
+        buyerNo: customer.no,
+      });
       if (orderBy) {
         queryBuilder.orderBy(`stock.${orderBy}`, orderDirection || 'ASC');
       }
@@ -40,27 +51,34 @@ export class BuyService {
       throw error;
     }
   }
+  async get(id: number, customer): Promise<any> {
+    try {
+      const data = await this.buyRepository.findOne({
+        where: { id, isDel: false, buyerNo: customer.no },
+      });
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  }
 
   public async create(
     data: any,
-    userBuy: any,
+    customerBuy: any,
     keyTrans?: string,
   ): Promise<any> {
     const key = keyTrans ?? (await this.buyRepository.startTransaction());
     try {
-      const checkOwner = await this.buyRepository.findOne({
-        where: { vin: data.vin, isDel: false, buyerNo: Not(userBuy.no) },
+      const checkVin = await this.buyRepository.findOne({
+        where: { vin: data.vin, isDel: false },
       });
-      if (!checkOwner) {
+      if (checkVin) {
         throw new Error('The car has been sold to someone else.');
       }
-      const exists = await this.buyRepository.findOne({
-        where: { vin: data.vin, isDel: false, buyerNo: userBuy.no },
-      });
-      if (exists) {
-        throw new Error('The car has been sold to you');
-      }
-      const buy = await this.buyRepository.createEntity(data, key);
+      const buy = await this.buyRepository.createEntity(
+        { ...data, buyerNo: customerBuy.no },
+        key,
+      );
       //send HP_CT_001
       const dataSend: HP_CT_001Dto = {
         STOCK: {
@@ -96,7 +114,7 @@ export class BuyService {
         );
       }
       if (!keyTrans) await this.buyRepository.commitTransaction(key);
-      return true;
+      return buy;
     } catch (error) {
       if (!keyTrans) await this.buyRepository.rollbackTransaction(key);
       throw error;
