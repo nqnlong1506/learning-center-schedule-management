@@ -187,11 +187,16 @@ export class StockService {
       throw error;
     }
   }
-  async getById(id: string): Promise<any> {
+  async get(fields: Record<string, string>): Promise<any> {
     try {
       const queryBuilder = this.stockRepository.createQueryBuilder('stock');
 
-      queryBuilder.where('stock.id = :id', { id }).andWhere('stock.is_del = 0');
+      Object.entries(fields).forEach(([key, value], index) => {
+        const paramKey = `param_${key}`;
+        queryBuilder.andWhere(`stock.${key} = :${paramKey}`, {
+          [paramKey]: value,
+        });
+      });
 
       const stock = await queryBuilder.getOne();
 

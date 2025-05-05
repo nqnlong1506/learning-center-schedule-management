@@ -36,9 +36,9 @@ export class StockController {
   }
 
   @Get('view')
-  async getById(@Query('id') id: string, @Res() res: Response) {
+  async get(@Query() query: Record<string, string>, @Res() res: Response) {
     try {
-      const stock = await this.stockServices.getById(id);
+      const stock = await this.stockServices.get(query);
 
       if (!stock) {
         return res.status(HttpStatus.NOT_FOUND).json({

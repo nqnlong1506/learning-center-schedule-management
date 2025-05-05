@@ -59,7 +59,7 @@ export class BuyController {
   ) {
     try {
       const buy = await this.buyService.get(id, customer);
-      return res.status(HttpStatus.OK).json({ success: true, ...buy });
+      return res.status(HttpStatus.OK).json({ success: true, data: buy });
     } catch (error) {
       if (!res.headersSent) {
         return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
