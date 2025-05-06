@@ -29,12 +29,13 @@ export class BuyService {
       } = query;
       console.log('whereCondition', whereCondition);
       const numberPage = pageSize;
-      const queryBuilder = this.buyRepository.createQueryBuilder('stock');
-      queryBuilder.andWhere('stock.buyerNo = :buyerNo', {
+      const queryBuilder = this.buyRepository.createQueryBuilder('buy');
+      queryBuilder.leftJoinAndSelect('buy.stock', 'stock');
+      queryBuilder.andWhere('buy.buyerNo = :buyerNo', {
         buyerNo: customer.no,
       });
       if (orderBy) {
-        queryBuilder.orderBy(`stock.${orderBy}`, orderDirection || 'ASC');
+        queryBuilder.orderBy(`buy.${orderBy}`, orderDirection || 'ASC');
       }
       queryBuilder.take(numberPage).skip((page - 1) * numberPage);
       const [data, totalCount] = await queryBuilder.getManyAndCount();
@@ -103,6 +104,7 @@ export class BuyService {
         WARRANTY: data.warranty,
       };
       const dataResponse = await this.vSolSenderService.handleHPCT001(dataSend);
+      console.log('dataResponse CT001', dataResponse);
       if (dataResponse?.IF_RST_CD == '00') {
         await this.buyRepository.updateEntity(
           { id: buy.id },

@@ -28,6 +28,7 @@ export class SellService {
       await this.sRepo.createEntity(create, key);
 
       const send = await this.sender.HP_CT_003(create);
+      console.log('send', send);
       if (send instanceof Error) throw send;
 
       await this.sRepo.commitTransaction(key);

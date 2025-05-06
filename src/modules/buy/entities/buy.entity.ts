@@ -1,8 +1,11 @@
 import { IsBoolean, IsDate, IsNumber, IsString } from 'class-validator';
+import { StockEntity } from 'src/modules/stock/entities/stock.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -112,4 +115,8 @@ export class BuyEntity {
   @IsDate()
   @CreateDateColumn({ name: 'reg_date', type: 'timestamp', nullable: true })
   regDate: Date;
+
+  @OneToOne(() => StockEntity, (s) => s.VIN)
+  @JoinColumn({ name: 'vin', referencedColumnName: 'VIN' })
+  stock: StockEntity;
 }

@@ -6,6 +6,9 @@ import {
   Body,
   HttpStatus,
   UseInterceptors,
+  Get,
+  Param,
+  Query,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { APIResponse, HpAPIResponse } from 'src/config/api';
@@ -77,6 +80,27 @@ export class VSolReceiverController {
       };
       return res.json(response);
     } catch (error) {
+      return res.status(HttpStatus.OK).json({
+        IF_RST_MSG: false,
+        IF_RST_CD: '00',
+      } as HpAPIResponse);
+    }
+  }
+
+  @Get('fake-pg')
+  async fakePg(@Query() query: any, @Res() res: Response) {
+    try {
+      const { vin, status } = query;
+      console.log('vin', vin);
+      await this.vSolReceiverService.fakePg({ vin, status });
+      const response: HpAPIResponse = {
+        VIN: vin,
+        IF_RST_MSG: true,
+        IF_RST_CD: '00',
+      };
+      return res.json(response);
+    } catch (error) {
+      console.log(error);
       return res.status(HttpStatus.OK).json({
         IF_RST_MSG: false,
         IF_RST_CD: '00',

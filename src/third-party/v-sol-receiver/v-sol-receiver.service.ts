@@ -85,11 +85,26 @@ export class VSolReceiverService {
         contNo: STOCK.CONT_NO,
         statCd: STOCK.STAT_CD,
       };
+      console.log('updateBuy', dataUpdate);
       await this.buyService.update(dataUpdate);
       await this.stockRepository.commitTransaction(key);
     } catch (error) {
       console.log('error', error);
       await this.stockRepository.rollbackTransaction(key);
+      throw error;
+    }
+  }
+
+  async fakePg(query: { vin: string; status: string }) {
+    try {
+      const { vin, status } = query;
+      const dataUpdate = {
+        vin: vin,
+        statCd: status,
+      };
+      await this.buyService.update(dataUpdate);
+    } catch (error) {
+      console.log('error', error);
       throw error;
     }
   }

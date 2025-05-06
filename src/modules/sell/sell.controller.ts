@@ -38,6 +38,7 @@ export class SellController {
 
   @Post()
   async post(@Body() body: SellEntity, @Res() res: Response) {
+    console.log('bodysell', body);
     const post = await this.sellService.post(body);
     if (post instanceof Error) {
       const response: APIResponse = {

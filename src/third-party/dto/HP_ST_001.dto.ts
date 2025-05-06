@@ -10,7 +10,6 @@ function transformDate(value: any) {
   }
   return value;
 }
-
 export class HP_ST_001_STOCK_Dto {
   @IsString()
   VIN: string;
@@ -32,11 +31,19 @@ export class HP_ST_001_STOCK_Dto {
   FIRSTDATE: Date;
 
   @IsString()
-  PUR_CDT: Date;
+  PUR_CDT: string;
 
   @IsString()
   @Transform(({ value }) => transformDate(value))
   AUT_CADT: Date;
+
+  @IsString()
+  AUT_TIME_STA: string;
+
+  @IsString()
+  AUT_TIME_END: string;
+
+  //BRAND
 
   @IsNumber()
   MILEAGE: number;
@@ -58,6 +65,28 @@ export class HP_ST_001_STOCK_Dto {
 
   @IsNumber()
   CAR_ADP: number;
+
+  @IsNumber()
+  CAR_ADP_HD: number;
+
+  @IsNumber()
+  CAR_ADP_MF: number;
+
+  @IsNumber()
+  CAR_ADP_MC: number;
+
+  @IsNumber()
+  CAR_ADP_TAF: number;
+
+  @IsNumber()
+  CAR_ADP_RF: number;
+
+  @IsNumber()
+  CAR_ADP_PIF: number;
+
+  //LIS_TYP
+  @IsString()
+  LIS_TYP: string;
 
   @IsString()
   MNW_NO_PE: string;
@@ -91,6 +120,9 @@ export class HP_ST_001_STOCK_Dto {
 
   @IsString()
   CAR_PRO: string;
+
+  @IsString()
+  CAR_VIS: string;
 
   @IsString()
   REP_NM: string;

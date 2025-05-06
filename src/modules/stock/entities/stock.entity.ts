@@ -39,6 +39,14 @@ export class StockEntity {
   @Column({ name: 'aut_cadt', type: 'date', nullable: true })
   AUT_CADT: Date;
 
+  @IsDate()
+  @Column({ name: 'aut_time_sta', type: 'date', nullable: true })
+  AUT_TIME_STA: Date;
+
+  @IsDate()
+  @Column({ name: 'aut_time_end', type: 'date', nullable: true })
+  AUT_TIME_END: Date;
+
   @IsNumber()
   @Column({ name: 'mileage', type: 'int', nullable: true })
   MILEAGE: number;
@@ -71,8 +79,24 @@ export class StockEntity {
   CAR_ADP_HD: number;
 
   @IsNumber()
-  @Column({ name: 'car_adp_wp', type: 'int', default: 0 })
-  CAR_ADP_WP: number;
+  @Column({ name: 'car_adp_mf', type: 'int', default: 0 })
+  CAR_ADP_MF: number;
+
+  @IsNumber()
+  @Column({ name: 'car_adp_mc', type: 'int', default: 0 })
+  CAR_ADP_MC: number;
+
+  @IsNumber()
+  @Column({ name: 'car_adp_taf', type: 'int', default: 0 })
+  CAR_ADP_TAF: number;
+
+  @IsNumber()
+  @Column({ name: 'car_adp_rf', type: 'int', default: 0 })
+  CAR_ADP_RF: number;
+
+  @IsNumber()
+  @Column({ name: 'car_adp_pif', type: 'int', default: 0 })
+  CAR_ADP_PIF: number;
 
   @IsString()
   @Column({ name: 'mnw_no_pe', type: 'varchar', length: 100, nullable: true })
