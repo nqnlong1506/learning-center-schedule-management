@@ -104,4 +104,20 @@ export class SubVSolReceiverService {
       return error;
     }
   }
+
+  async EX_EXP_002(body: any): Promise<void | Error> {
+    try {
+      console.log('[EX_EXP_002 - receiver]', body);
+    } catch (error) {
+      return error;
+    }
+  }
+
+  async AU_AUCT_002(body: any): Promise<void | Error> {
+    try {
+      console.log('[AU_AUCT_002 - receiver]', body);
+    } catch (error) {
+      return error;
+    }
+  }
 }

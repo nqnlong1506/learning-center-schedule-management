@@ -117,4 +117,40 @@ export class SubVSolReceiverController {
     };
     return res.json(response);
   }
+
+  @Post('ex_exp_002')
+  async EX_EXP_002(@Body() body: any, @Res() res: Response) {
+    const exp002 = await this.rcvService.EX_EXP_002(body);
+    if (exp002 instanceof Error) {
+      const response: ThirdAPIResponse = {
+        IF_RST_CD: '99',
+        IF_RST_MSG: 'FAILED',
+        message: exp002.message,
+      };
+      return res.json(response);
+    }
+    const response: ThirdAPIResponse = {
+      IF_RST_CD: '00',
+      IF_RST_MSG: 'SUCCESS',
+    };
+    return res.json(response);
+  }
+
+  @Post('au_auct_002')
+  async AU_AUCT_002(@Body() body: any, @Res() res: Response) {
+    const exp002 = await this.rcvService.AU_AUCT_002(body);
+    if (exp002 instanceof Error) {
+      const response: ThirdAPIResponse = {
+        IF_RST_CD: '99',
+        IF_RST_MSG: 'FAILED',
+        message: exp002.message,
+      };
+      return res.json(response);
+    }
+    const response: ThirdAPIResponse = {
+      IF_RST_CD: '00',
+      IF_RST_MSG: 'SUCCESS',
+    };
+    return res.json(response);
+  }
 }

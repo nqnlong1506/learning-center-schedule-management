@@ -7,6 +7,7 @@ import { AxiosError } from 'axios';
 import { APIStatus } from 'src/config/api';
 import { SellEntity } from 'src/modules/sell/entities/sell.entity';
 import { toSell } from './entities/sell';
+import { AuctionEntity } from 'src/modules/auction/entities/auction.entity';
 
 @Injectable()
 export class SubVSolSenderService {
@@ -82,6 +83,54 @@ export class SubVSolSenderService {
       if (!APIStatus[status] || !data || data?.IF_RST_CD !== '00')
         throw new Error(data?.IF_RST_MSG || 'error');
       console.log('[HP_BO_005 - sender]', data);
+    } catch (error) {
+      return error;
+    }
+  }
+
+  async EX_EXP_001(auction: AuctionEntity): Promise<void | Error> {
+    try {
+      const body = auction;
+      const { status, data } = await firstValueFrom(
+        this.httpService
+          .post(`${this.V_SOL_URL}/ex_exp_001`, body, {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          })
+          .pipe(
+            catchError((error: AxiosError) => {
+              throw new Error(error.message);
+            }),
+          ),
+      );
+      if (!APIStatus[status] || !data || data?.IF_RST_CD !== '00')
+        throw new Error(data?.IF_RST_MSG || 'error');
+      console.log('[EX_EXP_001 - sender]', data);
+    } catch (error) {
+      return error;
+    }
+  }
+
+  async AU_AUCT_001(auction: AuctionEntity): Promise<void | Error> {
+    try {
+      const body = auction;
+      const { status, data } = await firstValueFrom(
+        this.httpService
+          .post(`${this.V_SOL_URL}/au_auct_001`, body, {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          })
+          .pipe(
+            catchError((error: AxiosError) => {
+              throw new Error(error.message);
+            }),
+          ),
+      );
+      if (!APIStatus[status] || !data || data?.IF_RST_CD !== '00')
+        throw new Error(data?.IF_RST_MSG || 'error');
+      console.log('[AU_AUCT_001 - sender]', data);
     } catch (error) {
       return error;
     }
