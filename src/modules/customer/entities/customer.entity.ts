@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { CustomerStageEnum, CustomerTypeEnum } from '../enums';
 import { GenderEnum } from 'src/config/enums/gender';
 import { YesNoEnum } from 'src/config/enums/yesno';
@@ -10,6 +10,7 @@ import {
   IsString,
 } from 'class-validator';
 import { passwordCrypt } from 'src/utils/password';
+import { VendorEntity } from 'src/modules/vendor/entities/vendor.entity';
 
 @Entity('customer', { orderBy: { createdAt: 'DESC' } })
 export class CustomerEntity {
@@ -18,7 +19,7 @@ export class CustomerEntity {
   @PrimaryGeneratedColumn({ type: 'int', comment: 'CUST_NO - 고객번호' })
   no: number;
 
-  @Column({})
+  @Column({ comment: 'CUST_STG - general, auction, export = trading' })
   stage: CustomerStageEnum;
 
   @Column({ comment: 'CUST_TP - 고객유형' })
@@ -124,6 +125,9 @@ export class CustomerEntity {
 
   @Column({ name: 'updated_at', type: 'timestamp' })
   updatedAt: Date;
+
+  @OneToOne(() => VendorEntity, (vendor) => vendor.customer)
+  vendor: VendorEntity;
 
   toJson(): void {
     this.password = undefined;

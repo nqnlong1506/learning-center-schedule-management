@@ -1,11 +1,17 @@
 import { IsEnum, IsOptional, IsString } from 'class-validator';
 import { YesNoEnum } from 'src/config/enums/yesno';
-import { CustomerTypeEnum } from 'src/modules/customer/enums';
+import {
+  CustomerStageEnum,
+  CustomerTypeEnum,
+} from 'src/modules/customer/enums';
 
 export class CustomerDTO {
   @IsString()
   @IsOptional()
   no: string;
+
+  @IsEnum(CustomerStageEnum)
+  stage: CustomerStageEnum;
 
   @IsEnum(CustomerTypeEnum)
   type: CustomerTypeEnum;
@@ -25,6 +31,10 @@ export class CustomerDTO {
 
   @IsString()
   customerID: string;
+
+  @IsString()
+  @IsOptional()
+  customerPW: string;
 
   @IsString()
   @IsOptional()
@@ -61,4 +71,16 @@ export class CustomerDTO {
   @IsString()
   @IsOptional()
   corporationNo: string;
+
+  @IsString()
+  @IsOptional()
+  memo: string;
+
+  @IsString()
+  @IsOptional()
+  representativeNumber: string;
+
+  @IsString()
+  @IsOptional()
+  bankAccount: string;
 }

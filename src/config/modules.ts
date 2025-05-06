@@ -5,6 +5,7 @@ import { CarHistoryModule } from 'src/modules/car-history/car-history.module';
 import { CustomerModule } from 'src/modules/customer/customer.module';
 import { SellModule } from 'src/modules/sell/sell.module';
 import { StockModule } from 'src/modules/stock/stock.module';
+import { VendorModule } from 'src/modules/vendor/vendor.module';
 
 export const AppModules = [
   CustomerModule,
@@ -14,4 +15,5 @@ export const AppModules = [
   SellModule,
   CarHistoryModule,
   AutobeginModule,
+  VendorModule,
 ];

@@ -5,6 +5,8 @@ import { CustomerRepository } from 'src/modules/customer/repositories/customer.r
 import { SellDTO } from './dto/sell';
 import { SellRepository } from 'src/modules/sell/repositories/sell.repository';
 import { SellEntity } from 'src/modules/sell/entities/sell.entity';
+import { CustomerStageEnum } from 'src/modules/customer/enums';
+import { VendorEntity } from 'src/modules/vendor/entities/vendor.entity';
 
 @Injectable()
 export class SubVSolReceiverService {
@@ -21,6 +23,7 @@ export class SubVSolReceiverService {
       if (!customer) throw new Error('customer does not exist.');
 
       customer.id = body.customerID;
+      customer.password = body.customerPW;
       customer.type = body.type;
       customer.name = body.name;
       customer.mobilephone = body.phone;
@@ -36,6 +39,13 @@ export class SubVSolReceiverService {
       customer.representativeName = body.representativeName;
       customer.businessNo = body.businessNo;
       customer.corporationNo = body.corporationNo;
+      if (body.stage !== CustomerStageEnum.GENERAL) {
+        const vendor = new VendorEntity();
+        vendor.memo = body.memo;
+        vendor.representativeNumber = body.representativeNumber;
+        vendor.bankAccount = body.bankAccount;
+        customer.vendor = vendor;
+      }
 
       const post = await this.cRepo.createEntity(customer);
       return post;
