@@ -3,6 +3,9 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { CustomerModule } from '../customer/customer.module';
 import { JwtModule } from '@nestjs/jwt';
+import { KakaoModule } from './modules/kakao/kakao.module';
+import { NaverModule } from './modules/naver/naver.module';
+import { RouterModule } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -11,6 +14,24 @@ import { JwtModule } from '@nestjs/jwt';
       global: true,
       secret: process.env.JWT_SECRET,
     }),
+    KakaoModule,
+    NaverModule,
+    RouterModule.register([
+      {
+        path: 'auth',
+        module: this,
+        children: [
+          {
+            path: 'kakao',
+            module: KakaoModule,
+          },
+          {
+            path: 'naver',
+            module: NaverModule,
+          },
+        ],
+      },
+    ]),
   ],
   controllers: [AuthController],
   providers: [AuthService],

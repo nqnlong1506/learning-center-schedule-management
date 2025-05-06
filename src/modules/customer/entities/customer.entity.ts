@@ -1,5 +1,5 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { CustomerTypeEnum } from '../enums';
+import { CustomerStageEnum, CustomerTypeEnum } from '../enums';
 import { GenderEnum } from 'src/config/enums/gender';
 import { YesNoEnum } from 'src/config/enums/yesno';
 import {
@@ -18,6 +18,9 @@ export class CustomerEntity {
   @PrimaryGeneratedColumn({ type: 'int', comment: 'CUST_NO - 고객번호' })
   no: number;
 
+  @Column({})
+  stage: CustomerStageEnum;
+
   @Column({ comment: 'CUST_TP - 고객유형' })
   type: CustomerTypeEnum;
 
@@ -28,7 +31,7 @@ export class CustomerEntity {
 
   @IsString()
   @IsNotEmpty()
-  @Column({ comment: 'CCUST_PW - 비밀번호' })
+  @Column({ comment: 'CUST_PW - 비밀번호' })
   password: string;
 
   @IsString()

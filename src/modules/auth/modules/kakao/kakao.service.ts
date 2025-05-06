@@ -1,0 +1,18 @@
+import { Injectable } from '@nestjs/common';
+import { KakaoService as ThirdKakaoService } from 'src/third-party/kakao/kakao.service';
+
+@Injectable()
+export class KakaoService {
+  constructor(private readonly thirdKakaoService: ThirdKakaoService) {}
+
+  async login(code: string): Promise<any> {
+    // console.log(code);
+    const tokenObj = await this.thirdKakaoService.getTokenByAuthCode(code);
+    console.log(tokenObj);
+    const { access_token } = tokenObj;
+    const data = await this.thirdKakaoService.getInfoByToken(access_token);
+    console.log(data);
+  }
+}
+//eyJraWQiOiI5ZjI1MmRhZGQ1ZjIzM2Y5M2QyZmE1MjhkMTJmZWEiLCJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI4Zjc5NjdhYmI2MGY1ODM1ZjdmZTJjOTIzODFjYTBlMyIsInN1YiI6IjQyMzczNTA0MTEiLCJhdXRoX3RpbWUiOjE3NDY1MDYzMjAsImlzcyI6Imh0dHBzOi8va2F1dGgua2FrYW8uY29tIiwiZXhwIjoxNzQ2NTEzNTIwLCJpYXQiOjE3NDY1MDYzMjB9.XkRk4MNe1hIPyKV4S8WaVbucfoeZvPTcmM-NDHJE2v3NS5kNvn2vRAYBnOFIOSTr9gyEc1OzEZBwFIcCpZnEd4_jaU_8D0_oOCA24yBWVuA_Ad1tRVwpBS4I8huhE_9NOLoKKbvWXRsDC6kEkSqEtY-I2kgu4W7j3YdKZhYL9zfZwQ1lgICZgj30-WMGros6w9NMebJXSZAToU3H5Hxw69WBQj0KNzrzBo6EAmZ8K7vI5e23MO8ZXsg4DFnw-nkh-amekz0Ny37wvQXCVR1ZiiLaarDrcEoagn7huYcJtQkenNFQHLz0abSfvOw6xAI1LkyX79Co1c_sk2836tUeYA
+//eyJraWQiOiI5ZjI1MmRhZGQ1ZjIzM2Y5M2QyZmE1MjhkMTJmZWEiLCJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiI4Zjc5NjdhYmI2MGY1ODM1ZjdmZTJjOTIzODFjYTBlMyIsInN1YiI6IjQyMzczNTA0MTEiLCJhdXRoX3RpbWUiOjE3NDY1MDYzNzcsImlzcyI6Imh0dHBzOi8va2F1dGgua2FrYW8uY29tIiwiZXhwIjoxNzQ2NTEzNTc3LCJpYXQiOjE3NDY1MDYzNzd9.DqWlAlQqvN5LVbFEeSgXJYu5HR13Ay5NnhQ9S3f7JHtOOu2VCtx1CFQbtzzCw2hJrd-_CUp1YKy9KBrov33jtFrH2VSeJDRmpQq4hnLtDpsszRMZ4ZU56uFmzNiG4frBwGju86jWws8GdFJdWmx5jljMntEETn-NPKETumPxxakpmW0Pw0Tu9rw7u7OKSbpHqKpFvAS1PxOrauAkjuBUh_0qYMUVADrXxpxLlTY1kKfVrFQCXKFxitgns6ZOv-VCy8jvxw-K9CekjJxB3dbc0cE87eX81KlXeAhZg4XVY406nYnhirpw2oJh9ViU2LMyuffS5rDOrPBdY0uUDXNdsg
