@@ -1,3 +1,4 @@
+import { AuctionModule } from 'src/modules/auction/auction.module';
 import { KakaoModule } from 'src/third-party/kakao/kakao.module';
 import { SubVSolReceiverModule } from 'src/third-party/sub-v-sol-receiver/sub-v-sol-receiver.module';
 import { SubVSolSenderModule } from 'src/third-party/sub-v-sol-sender/sub-v-sol-sender.module';
@@ -10,4 +11,5 @@ export const ThirdModules = [
   VSolReceiverModule,
   SubVSolReceiverModule,
   SubVSolSenderModule,
+  AuctionModule,
 ];

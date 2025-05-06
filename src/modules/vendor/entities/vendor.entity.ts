@@ -8,7 +8,7 @@ import {
 import { CustomerEntity as Customer } from 'src/modules/customer/entities/customer.entity';
 @Entity('vendor')
 export class VendorEntity {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ type: 'int' })
   id: number;
 
   @Column({ name: 'cust_no', unique: true })
