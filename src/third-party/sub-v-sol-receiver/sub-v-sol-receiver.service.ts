@@ -25,9 +25,14 @@ export class SubVSolReceiverService {
 
       customer.id = body.customerID;
       customer.password = passwordCrypt(body.customerPW);
+      customer.stage = body.stage;
       customer.type = body.type;
       customer.name = body.name;
-      customer.mobilephone = body.phone;
+      if (body.stage !== CustomerStageEnum.GENERAL) {
+        customer.mobilephone = `${body.stage}-${body.phone}`;
+      } else {
+        customer.mobilephone = body.phone;
+      }
       customer.birthdate = body.birthDate;
       customer.email = body.email;
       customer.postalCode = body.zipNo;
@@ -51,6 +56,7 @@ export class SubVSolReceiverService {
       const post = await this.cRepo.createEntity(customer);
       return post;
     } catch (error) {
+      console.log('error', error, body);
       return error;
     }
   }

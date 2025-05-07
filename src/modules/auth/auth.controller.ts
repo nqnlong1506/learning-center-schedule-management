@@ -43,6 +43,7 @@ export class AuthController {
     const customer = {
       no: login.no,
       id: login.id,
+      stage: login.stage,
       name: login.name,
       mobilephone: login.mobilephone,
       isDel: login.isDel,

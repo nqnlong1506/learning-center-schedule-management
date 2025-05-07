@@ -27,6 +27,7 @@ export class AppModule {
         { path: 'file/preview/(.*)', method: RequestMethod.GET },
         { path: 'file/download/(.*)', method: RequestMethod.GET },
         { path: 'v-sol-receiver/(.*)', method: RequestMethod.ALL },
+        { path: 'sub-v-sol-receiver/(.*)', method: RequestMethod.ALL },
       )
       .forRoutes('*');
   }
