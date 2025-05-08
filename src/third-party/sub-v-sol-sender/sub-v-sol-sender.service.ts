@@ -135,4 +135,32 @@ export class SubVSolSenderService {
       return error;
     }
   }
+
+  async PG_PRG_001(upperId: number): Promise<any | Error> {
+    try {
+      const { status, data } = await firstValueFrom(
+        this.httpService
+          .post(
+            `${this.V_SOL_URL}/pg_prg_001`,
+            { upperId },
+            {
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            },
+          )
+          .pipe(
+            catchError((error: AxiosError) => {
+              throw new Error(error.message);
+            }),
+          ),
+      );
+      if (!APIStatus[status] || !data || data?.IF_RST_CD !== '00')
+        throw new Error(data?.IF_RST_MSG || 'error');
+      console.log('[PG_PRG_001 - sender]', status);
+      return data;
+    } catch (error) {
+      return error;
+    }
+  }
 }
