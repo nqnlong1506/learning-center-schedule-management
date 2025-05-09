@@ -9,7 +9,7 @@ export class ProductGroupController {
 
   @Get('list')
   async getList(@Req() req: Request, @Res() res: Response) {
-    const { upperId } = req.query;
+    const { upperId, isCount = '0' } = req.query;
     if (upperId && Number(upperId) !== 0 && !Number(upperId)) {
       const reponse: APIResponse = {
         success: false,
@@ -18,7 +18,10 @@ export class ProductGroupController {
       };
       return res.json(reponse);
     }
-    const list = await this.pgService.getList(Number(upperId || 0));
+    const list = await this.pgService.getList(
+      Number(upperId || 0),
+      isCount.toString() === '1',
+    );
     if (list instanceof Error) {
       const reponse: APIResponse = {
         success: false,
