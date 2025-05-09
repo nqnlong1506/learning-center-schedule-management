@@ -50,6 +50,7 @@ export class StockService {
         mileageMin,
         mileageMax,
         fuels,
+        lisTyp,
       } = whereCondition;
       let numberPage = pageSize;
       const queryBuilder = this.stockRepository.createQueryBuilder('stock');
@@ -57,6 +58,9 @@ export class StockService {
       queryBuilder.andWhere('stock.car_vis = "Y" ');
       if (cho) {
         queryBuilder.andWhere('stock.CHO = :cho', { cho });
+      }
+      if (lisTyp) {
+        queryBuilder.andWhere('stock.LIS_TYP = :lisTyp', { lisTyp });
       }
       if (topFilterType) {
         switch (topFilterType) {
