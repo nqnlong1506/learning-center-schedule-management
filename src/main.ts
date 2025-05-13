@@ -9,14 +9,10 @@ async function bootstrap() {
   app.use(bodyParser.json({ limit: '10mb' }));
   app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
 
-  const allows =
-    process.env.NODE_ENV === 'dev'
-      ? 'Content-Type, Accept, Authorization, Session_id'
-      : 'Content-Type, Accept, Authorization';
   app.enableCors({
     origin: '*',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    allowedHeaders: allows,
+    allowedHeaders: 'Content-Type, Accept, Authorization, Session_id',
     credentials: true,
   });
   // app.use(
