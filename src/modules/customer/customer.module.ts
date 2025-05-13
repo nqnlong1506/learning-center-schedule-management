@@ -15,6 +15,6 @@ import { SubVSolSenderModule } from 'src/third-party/sub-v-sol-sender/sub-v-sol-
   ],
   controllers: [CustomerController],
   providers: [CustomerService, CustomerRepository],
-  exports: [CustomerRepository],
+  exports: [CustomerService, CustomerRepository],
 })
 export class CustomerModule {}
