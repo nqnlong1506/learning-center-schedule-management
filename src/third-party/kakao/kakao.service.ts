@@ -35,9 +35,6 @@ export class KakaoService {
       }
       // console.log('checking sending', status, data);
       return data;
-      // if (!APIStatus[status] || !data || data?.IF_RST_CD !== '00')
-      //   throw new Error(data?.IF_RST_MSG || 'error');
-      // console.log('[HP_CUST_001 - sender]', data);
     } catch (error) {
       return error;
     }
