@@ -1,13 +1,16 @@
-import { Controller, Post, Req, Res } from '@nestjs/common';
+import { Body, Controller, Post, Req, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Request, Response } from 'express';
 import { APIResponse } from 'src/config/api';
 import { JwtService } from '@nestjs/jwt';
+import { CustomerEntity } from '../customer/entities/customer.entity';
+import { CustomerService } from '../customer/customer.service';
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
+    private readonly customerService: CustomerService,
     private jwtService: JwtService,
   ) {}
 
@@ -70,5 +73,24 @@ export class AuthController {
       message: '[auth - login] api.',
     };
     return res.json(response);
+  }
+
+  @Post('register')
+  async register(@Body() body: CustomerEntity, @Res() res: Response) {
+    const create = await this.customerService.post(body);
+    if (create instanceof Error) {
+      const response: APIResponse = {
+        success: false,
+        data: undefined,
+        message: `[customer-post] ${create.message}.`,
+      };
+      return res.json(response);
+    }
+    const reponse: APIResponse = {
+      success: true,
+      data: undefined,
+      message: '[customer-post] api.',
+    };
+    return res.json(reponse);
   }
 }
