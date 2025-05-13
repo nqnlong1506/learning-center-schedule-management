@@ -1,8 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { SellEntity } from './entities/sell.entity';
 import { SellRepository } from './repositories/sell.repository';
-import { formatNumber } from './config';
 import { SubVSolSenderService } from 'src/third-party/sub-v-sol-sender/sub-v-sol-sender.service';
+import { CreateSellDTO } from './dto/create-sell.dto';
+import { SellStatusEnum } from './enums';
+import { UpdateStateSellDTO } from './dto/update-state-sell.dto';
+import { Equal } from 'typeorm';
 
 @Injectable()
 export class SellService {
@@ -19,24 +22,65 @@ export class SellService {
     return sell;
   }
 
-  async post(body: SellEntity): Promise<SellEntity | Error> {
+  async post(body: CreateSellDTO, customer: any): Promise<SellEntity | Error> {
     const key = await this.sRepo.startTransaction();
     try {
-      const entity = SellEntity.toCreateEntity(body);
-      const create = await this.sRepo.createEntity(entity, key);
-      create.contractNo = `KMG-P-${formatNumber(create.id)}`;
-      await this.sRepo.createEntity(create, key);
+      const data = body as SellEntity;
+      data.sellerNo = customer.no;
+      console.log('data', data);
+      const create = await this.sRepo.createEntity(data, key);
 
-      const send = await this.sender.HP_CT_003(create);
-      console.log('send', send);
-      if (send instanceof Error) throw send;
-
+      const dataResponse = await this.sender.HP_CT_003(create, body.seriesNo);
+      console.log('dataResponse', dataResponse);
+      if (dataResponse?.IF_RST_CD == '00') {
+        await this.sRepo.updateEntity(
+          { id: create.id },
+          {
+            contractNo: dataResponse.CONT_NO,
+            autoPrice: dataResponse.AUTO_PRICE,
+          },
+          key,
+        );
+      } else {
+        throw new Error(dataResponse?.IF_RST_MSG || 'error');
+      }
       await this.sRepo.commitTransaction(key);
       return create;
     } catch (error) {
       console.log('error', error);
       await this.sRepo.rollbackTransaction(key);
       return error;
+    }
+  }
+
+  async updateState(data: UpdateStateSellDTO): Promise<SellEntity | Error> {
+    const key = await this.sRepo.startTransaction();
+    try {
+      const { id, status } = data;
+      const sell = await this.sRepo.findOne({ where: { id: Equal(id) } });
+      if (!sell) return new Error('sell doest not exist');
+      let update: any;
+
+      if (
+        status == SellStatusEnum.REGISTERED &&
+        sell.status == SellStatusEnum.ESTIMATE_QUOTE
+      ) {
+        update = await this.sRepo.updateEntity({ id }, { status }, key);
+      }
+
+      if (
+        status == SellStatusEnum.COMPLETE &&
+        sell.status == SellStatusEnum.FINAL_ESTIMATE
+      ) {
+        update = await this.sRepo.updateEntity({ id }, { status }, key);
+        await this.sender.HP_CT_003(update);
+      }
+
+      await this.sRepo.commitTransaction(key);
+      return update;
+    } catch (error) {
+      await this.sRepo.rollbackTransaction(key);
+      throw error;
     }
   }
 

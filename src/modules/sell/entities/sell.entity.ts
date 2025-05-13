@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { SellPEEnum, SellStatusEnum } from '../enums';
-import { IsEnum, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
 
 @Entity('sells')
 export class SellEntity {
@@ -12,13 +12,44 @@ export class SellEntity {
   @Column({ type: 'varchar', length: 20, comment: 'VIN -	차대번호' })
   vin: string;
 
+  @IsNumber()
+  @Column({ name: 'seller_no', type: 'int' })
+  sellerNo: number;
+
+  @IsString()
+  @Column({
+    name: 'car_reg_no',
+    type: 'varchar',
+    length: 20,
+  })
+  carRegNo: string;
+
+  @IsString()
+  @Column({
+    name: 'owner',
+    type: 'varchar',
+    length: 20,
+  })
+  owner: string;
+
+  @IsString()
   @Column({
     name: 'cont_no',
     type: 'varchar',
     length: 20,
     comment: 'CONT_NO -	계약번호',
+    nullable: true,
   })
   contractNo: string;
+
+  @IsNumber()
+  @Column({
+    name: 'auto_price',
+    type: 'int',
+    comment: 'QUOTE_PRICE - 최종견적가',
+    default: 0,
+  })
+  autoPrice: number;
 
   @IsEnum(SellStatusEnum)
   @IsOptional()
@@ -27,6 +58,7 @@ export class SellEntity {
     type: 'enum',
     enum: SellStatusEnum,
     comment: 'STAT_CD -	상태코드',
+    default: SellStatusEnum.REGISTERED,
   })
   status: SellStatusEnum;
 

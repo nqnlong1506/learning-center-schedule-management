@@ -52,7 +52,7 @@ export class StockService {
         fuels,
         lisTyp,
       } = whereCondition;
-      let numberPage = pageSize;
+      const numberPage = pageSize;
       const queryBuilder = this.stockRepository.createQueryBuilder('stock');
       queryBuilder.andWhere('stock.is_del = 0 ');
       queryBuilder.andWhere('stock.car_vis = "Y" ');
@@ -127,7 +127,7 @@ export class StockService {
         queryBuilder.andWhere('stock.YEAR <= :yearMax', { yearMax: yearMax });
       }
       if (carPriceMin || carPriceMax) {
-        let condition = `CASE 
+        const condition = `CASE 
           WHEN stock.LIS_TYP = '01' THEN stock.CAR_ADP 
           WHEN stock.LIS_TYP = '02' THEN stock.CAR_ADP_HD 
           ELSE stock.CAR_ADP_WP 
@@ -163,6 +163,9 @@ export class StockService {
             });
           }),
         );
+      }
+      if (lisTyp) {
+        queryBuilder.andWhere('stock.LIS_TYP = :lisTyp', { lisTyp });
       }
       queryBuilder.take(numberPage).skip((page - 1) * numberPage);
       const [data, totalCount] = await queryBuilder.getManyAndCount();

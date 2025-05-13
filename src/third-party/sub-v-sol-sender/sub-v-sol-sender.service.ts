@@ -3,11 +3,11 @@ import { CustomerEntity } from 'src/modules/customer/entities/customer.entity';
 import { toCustomer } from './entities/customer';
 import { HttpService } from '@nestjs/axios';
 import { catchError, firstValueFrom } from 'rxjs';
-import { AxiosError } from 'axios';
+import axios, { AxiosError } from 'axios';
 import { APIStatus } from 'src/config/api';
 import { SellEntity } from 'src/modules/sell/entities/sell.entity';
-import { toSell } from './entities/sell';
 import { AuctionEntity } from 'src/modules/auction/entities/auction.entity';
+import { HP_CT_003Dto } from '../dto/HP_CT_003.dto';
 
 @Injectable()
 export class SubVSolSenderService {
@@ -40,25 +40,42 @@ export class SubVSolSenderService {
     }
   }
 
-  async HP_CT_003(sell: SellEntity): Promise<void | Error> {
+  async HP_CT_003(sell: SellEntity, seriesNo?: string): Promise<any> {
     try {
-      const body = toSell(sell);
-      const { status, data } = await firstValueFrom(
-        this.httpService
-          .post(`${this.V_SOL_URL}/hp_ct_003`, body, {
-            headers: {
-              'Content-Type': 'application/json',
-            },
-          })
-          .pipe(
-            catchError((error: AxiosError) => {
-              throw new Error(error.message);
-            }),
-          ),
+      const DATA: HP_CT_003Dto = {
+        STOCK: {
+          VIN: sell.vin,
+          CAR_REG_NO: sell.carRegNo,
+          OWNER: sell.owner,
+          CLASSNAME: '',
+          MODELNAME: '',
+          SERIESNO: seriesNo ?? '',
+          FIRSTDATE: '',
+          FUEL: '',
+          TRANS: '',
+          YEAR: '',
+          COLOR: '',
+          STAT_CD: sell.status,
+          MILEAGE: '',
+          DIR_CAR_IMG: '',
+          EVAL_ZIP_NO: '',
+          EVAL_ADDR: '',
+          EVAL_ADDR_DE: '',
+          SAL_PE: '',
+        },
+      };
+      const HEADER = '';
+
+      const postData = {
+        HEADER,
+        DATA,
+      };
+      console.log('postData', postData);
+      const response = await axios.post(
+        `${this.V_SOL_URL}/hp_ct_003`,
+        postData,
       );
-      if (!APIStatus[status] || !data || data?.IF_RST_CD !== '00')
-        throw new Error(data?.IF_RST_MSG || 'error');
-      console.log('[HP_CT_003 - sender]', data);
+      return response.data;
     } catch (error) {
       return error;
     }

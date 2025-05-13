@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { BuyRepository } from './repositories/stock.repository';
 import { HP_CT_001Dto } from 'src/third-party/dto/HP_CT_001.dto';
 import { VSolSenderService } from 'src/third-party/v-sol-sender/v-sol-sender.service';
-import { Not } from 'typeorm';
 
 @Injectable()
 export class BuyService {

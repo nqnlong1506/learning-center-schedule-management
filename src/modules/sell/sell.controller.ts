@@ -1,8 +1,20 @@
-import { Body, Controller, Get, Post, Req, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpStatus,
+  Post,
+  Put,
+  Req,
+  Res,
+} from '@nestjs/common';
 import { SellService } from './sell.service';
 import { SellEntity } from './entities/sell.entity';
 import { Request, Response } from 'express';
 import { APIResponse } from 'src/config/api';
+import { CurrentCustomer } from 'src/decorators/current-customer.decorator';
+import { CreateSellDTO } from './dto/create-sell.dto';
+import { UpdateStateSellDTO } from './dto/update-state-sell.dto';
 
 @Controller('sell')
 export class SellController {
@@ -36,10 +48,14 @@ export class SellController {
     return res.json(reponse);
   }
 
-  @Post()
-  async post(@Body() body: SellEntity, @Res() res: Response) {
+  @Post('create')
+  async post(
+    @Body() body: CreateSellDTO,
+    @CurrentCustomer() customer: any,
+    @Res() res: Response,
+  ) {
     console.log('bodysell', body);
-    const post = await this.sellService.post(body);
+    const post = await this.sellService.post(body, customer);
     if (post instanceof Error) {
       const response: APIResponse = {
         success: false,
@@ -54,6 +70,21 @@ export class SellController {
       message: '[sell - post] api.',
     };
     return res.json(response);
+  }
+
+  @Put('update-status/:id')
+  async updateState(@Body() body: UpdateStateSellDTO, @Res() res: Response) {
+    try {
+      await this.sellService.updateState(body);
+      return res.status(HttpStatus.OK).json({ success: true });
+    } catch (error) {
+      if (!res.headersSent) {
+        return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+          message: error.message,
+          success: false,
+        });
+      }
+    }
   }
 
   @Post('update/:id')
