@@ -1,4 +1,3 @@
-import { VendorEntity } from 'src/modules/vendor/entities/vendor.entity';
 import {
   Column,
   Entity,
@@ -7,11 +6,25 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { AuctionStatusEnum } from '../config';
+import { IsNumber, IsString } from 'class-validator';
+import { CustomerEntity } from 'src/modules/customer/entities/customer.entity';
+import { StockEntity } from 'src/modules/stock/entities/stock.entity';
 
 @Entity('auction')
 export class AuctionEntity {
   @PrimaryGeneratedColumn({ type: 'int' })
   no: number;
+
+  @IsString()
+  @Column({ name: 'vin', type: 'varchar', length: 100 })
+  vin: string;
+
+  @Column({ name: 'stock_id' })
+  stockId: number;
+
+  @ManyToOne(() => StockEntity, (stock) => stock.id)
+  @JoinColumn({ name: 'stock_id' })
+  stock: StockEntity;
 
   @Column({ name: 'car_reg_no', type: 'varchar', length: 20 })
   carRegNo: string;
@@ -19,16 +32,17 @@ export class AuctionEntity {
   @Column({ name: 'auct_saved_date', type: 'timestamp' })
   auctionDate: Date;
 
-  @Column({ name: 'vendor_id', type: 'int' })
-  vendorId: number;
+  @Column({ name: 'vendor_no', type: 'int' })
+  vendorNo: number;
 
-  @ManyToOne(() => VendorEntity, (vendor) => vendor.id)
-  @JoinColumn({ name: 'vendor_id' })
-  vendor: VendorEntity;
+  @ManyToOne(() => CustomerEntity, (vendor) => vendor.no)
+  @JoinColumn({ name: 'vendor_no' })
+  vendor: CustomerEntity;
 
   @Column({ type: 'enum', enum: AuctionStatusEnum })
   status: AuctionStatusEnum;
 
+  @IsNumber()
   @Column({ type: 'int' })
   price: number;
 }

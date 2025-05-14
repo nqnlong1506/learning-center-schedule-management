@@ -6,6 +6,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { KakaoModule } from './modules/kakao/kakao.module';
 import { NaverModule } from './modules/naver/naver.module';
 import { RouterModule } from '@nestjs/core';
+import { SubVSolSenderModule } from 'src/third-party/sub-v-sol-sender/sub-v-sol-sender.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { RouterModule } from '@nestjs/core';
         ],
       },
     ]),
+    SubVSolSenderModule,
   ],
   controllers: [AuthController],
   providers: [AuthService],

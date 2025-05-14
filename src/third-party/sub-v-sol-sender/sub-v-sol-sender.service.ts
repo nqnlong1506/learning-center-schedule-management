@@ -8,6 +8,7 @@ import { APIStatus } from 'src/config/api';
 import { SellEntity } from 'src/modules/sell/entities/sell.entity';
 import { AuctionEntity } from 'src/modules/auction/entities/auction.entity';
 import { HP_CT_003Dto } from '../dto/HP_CT_003.dto';
+import { CustomerStageEnum } from 'src/modules/customer/enums';
 
 @Injectable()
 export class SubVSolSenderService {
@@ -35,6 +36,36 @@ export class SubVSolSenderService {
       if (!APIStatus[status] || !data || data?.IF_RST_CD !== '00')
         throw new Error(data?.IF_RST_MSG || 'error');
       console.log('[HP_CUST_001 - sender]', data);
+    } catch (error) {
+      return error;
+    }
+  }
+
+  async HP_CUST_002(
+    id: string,
+    stage: CustomerStageEnum,
+  ): Promise<void | Error> {
+    try {
+      const { status, data } = await firstValueFrom(
+        this.httpService
+          .post(
+            `${this.V_SOL_URL}/hp_cust_002`,
+            { id, stage },
+            {
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            },
+          )
+          .pipe(
+            catchError((error: AxiosError) => {
+              throw new Error(error.message);
+            }),
+          ),
+      );
+      if (!APIStatus[status] || !data || data?.IF_RST_CD !== '00')
+        throw new Error(data?.IF_RST_MSG || 'error');
+      console.log('[HP_CUST_002 - sender]', data);
     } catch (error) {
       return error;
     }
@@ -107,7 +138,13 @@ export class SubVSolSenderService {
 
   async EX_EXP_001(auction: AuctionEntity): Promise<void | Error> {
     try {
-      const body = auction;
+      const body = {
+        customerId: auction.vendor.id,
+        vin: auction.vin,
+        price: auction.price,
+        stage: auction.vendor.stage,
+      };
+      console.log('url', this.V_SOL_URL, body);
       const { status, data } = await firstValueFrom(
         this.httpService
           .post(`${this.V_SOL_URL}/ex_exp_001`, body, {
@@ -125,7 +162,8 @@ export class SubVSolSenderService {
         throw new Error(data?.IF_RST_MSG || 'error');
       console.log('[EX_EXP_001 - sender]', data);
     } catch (error) {
-      return error;
+      console.log('[EX_EXP_001 - sender]', error);
+      return new Error('[EX_EXP_001 - sender] failed.');
     }
   }
 

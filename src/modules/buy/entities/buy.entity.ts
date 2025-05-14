@@ -1,4 +1,5 @@
 import { IsBoolean, IsDate, IsNumber, IsString } from 'class-validator';
+import { CustomerStageEnum } from 'src/modules/customer/enums';
 import { StockEntity } from 'src/modules/stock/entities/stock.entity';
 import {
   Column,
@@ -18,6 +19,12 @@ export class BuyEntity {
   @IsNumber()
   @Column({ name: 'buyer_no', type: 'int' })
   buyerNo: number;
+
+  @Column({ name: 'cust_dis', type: 'enum', enum: CustomerStageEnum })
+  custDis: CustomerStageEnum;
+
+  @Column({ name: 'cont_dis', type: 'varchar', length: 2 })
+  contDis: string;
 
   @IsString()
   @Column({ name: 'vin', type: 'varchar', length: 100, nullable: true })
