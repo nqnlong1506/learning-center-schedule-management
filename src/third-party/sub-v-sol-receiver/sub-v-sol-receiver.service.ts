@@ -7,7 +7,7 @@ import { SellRepository } from 'src/modules/sell/repositories/sell.repository';
 import { SellEntity } from 'src/modules/sell/entities/sell.entity';
 import { CustomerStageEnum } from 'src/modules/customer/enums';
 import { VendorEntity } from 'src/modules/vendor/entities/vendor.entity';
-import { passwordCrypt } from 'src/utils/password';
+// import { passwordCrypt } from 'src/utils/password';
 
 @Injectable()
 export class SubVSolReceiverService {
@@ -24,7 +24,7 @@ export class SubVSolReceiverService {
       if (!customer) throw new Error('customer does not exist.');
 
       customer.id = body.customerID;
-      customer.password = passwordCrypt(body.customerPW);
+      customer.password = body.customerPW;
       customer.stage = body.stage;
       customer.type = body.type;
       customer.name = body.name;
