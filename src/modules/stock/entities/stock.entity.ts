@@ -1,8 +1,10 @@
 import { IsBoolean, IsDate, IsNumber, IsString } from 'class-validator';
+import { AuctionEntity } from 'src/modules/auction/entities/auction.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -46,6 +48,18 @@ export class StockEntity {
   @IsDate()
   @Column({ name: 'aut_time_end', type: 'date', nullable: true })
   AUT_TIME_END: Date;
+
+  @Column({ name: 'aut_hiest_pri', type: 'int', nullable: true })
+  AUT_HIEST_PRI: number;
+
+  @Column({ name: 'aut_sel_pri', type: 'int', nullable: true })
+  AUT_SEL_PRI: number;
+
+  @Column({ name: 'aut_sel_dat', type: 'timestamp', nullable: true })
+  AUT_SEL_DAT: Date;
+
+  @Column({ name: 'qut_num', type: 'varchar', length: 3, nullable: true })
+  QUT_NUM: string;
 
   @IsNumber()
   @Column({ name: 'mileage', type: 'int', nullable: true })
@@ -192,4 +206,7 @@ export class StockEntity {
   @IsDate()
   @CreateDateColumn({ name: 'reg_date', type: 'timestamp', nullable: true })
   regDate: Date;
+
+  @OneToMany(() => AuctionEntity, (auction) => auction.stock)
+  auctions: AuctionEntity[];
 }

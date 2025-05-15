@@ -1,6 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { SellPEEnum, SellStatusEnum } from '../enums';
 import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
+import { CustomerStageEnum } from 'src/modules/customer/enums';
 
 @Entity('sells')
 export class SellEntity {
@@ -15,6 +16,12 @@ export class SellEntity {
   @IsNumber()
   @Column({ name: 'seller_no', type: 'int' })
   sellerNo: number;
+
+  @Column({ name: 'cust_dis', type: 'enum', enum: CustomerStageEnum })
+  custDis: CustomerStageEnum;
+
+  @Column({ name: 'cont_dis', type: 'varchar', length: 2 })
+  contDis: string;
 
   @IsString()
   @Column({

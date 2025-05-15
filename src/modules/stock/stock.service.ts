@@ -1,11 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { StockRepository } from './repositories/stock.repository';
-import { CarFeatEnum, CarLisTyp, CarSummary } from 'src/config/enums/car';
+import { CarFeatEnum, CarSummary } from 'src/config/enums/car';
 import { Brackets } from 'typeorm';
+import { AuctionRepository } from '../auction/repositories/auction.repository';
+import { AuctionStatusEnum } from '../auction/config';
 
 @Injectable()
 export class StockService {
-  constructor(private readonly stockRepository: StockRepository) {}
+  constructor(
+    private readonly stockRepository: StockRepository,
+    private readonly auctionRepo: AuctionRepository,
+  ) {}
   private convertFeatureStringToArray(featureString: string): string[] {
     if (!featureString) return [];
 
@@ -194,11 +199,12 @@ export class StockService {
       throw error;
     }
   }
-  async get(fields: Record<string, string>): Promise<any> {
+  async get(fields: Record<string, string>, customerNo: number): Promise<any> {
     try {
       const queryBuilder = this.stockRepository.createQueryBuilder('stock');
 
       Object.entries(fields).forEach(([key, value], index) => {
+        console.log(index);
         const paramKey = `param_${key}`;
         queryBuilder.andWhere(`stock.${key} = :${paramKey}`, {
           [paramKey]: value,
@@ -214,11 +220,55 @@ export class StockService {
         return {
           ...stock,
           vehicleFeatures: this.convertFeatureStringToArray(stock.CAR_FEAT),
+          auction: await this.auctionRepo.getItem({
+            where: {
+              vin: stock.VIN,
+              vendorNo: customerNo,
+            },
+          }),
         };
       }
       return stock;
     } catch (error) {
       throw new Error(`Failed to get stock by id: ${error.message}`);
+    }
+  }
+
+  async myStocks(
+    customerNo: number,
+    status: AuctionStatusEnum,
+  ): Promise<any | Error> {
+    try {
+      const results = await this.stockRepository.getItemsWithoutPagination({
+        where: {
+          auctions: {
+            vendorNo: customerNo,
+            status: status,
+          },
+        },
+        relations: { auctions: true },
+      });
+      return results;
+    } catch (error) {
+      console.log('error', error);
+      return [];
+    }
+  }
+
+  async getView(id: number): Promise<any | Error> {
+    try {
+      const stock = await this.stockRepository.getItem({
+        where: {
+          id: id,
+        },
+        relations: {
+          auctions: true,
+        },
+      });
+      return stock;
+    } catch (error) {
+      console.log('error', error);
+      return undefined;
     }
   }
 }
