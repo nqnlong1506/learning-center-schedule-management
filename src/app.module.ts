@@ -25,6 +25,7 @@ export class AppModule {
         { path: 'stock/list', method: RequestMethod.ALL },
         { path: 'stock/view', method: RequestMethod.ALL },
         { path: 'customer/(.*)', method: RequestMethod.ALL },
+        { path: 'product-group/list', method: RequestMethod.ALL },
         { path: 'file/preview/(.*)', method: RequestMethod.GET },
         { path: 'file/download/(.*)', method: RequestMethod.GET },
         { path: 'v-sol-receiver/(.*)', method: RequestMethod.ALL },
