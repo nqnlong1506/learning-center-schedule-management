@@ -130,6 +130,25 @@ export class SellEntity {
   })
   repTeam: string;
 
+  @Column({
+    name: 'year',
+    type: 'int',
+  })
+  year: number;
+
+  @Column({
+    name: 'mileage',
+    type: 'int',
+  })
+  mileage: number;
+
+  @Column({
+    name: 'fuel',
+    type: 'varchar',
+    length: 50,
+  })
+  fuel: string;
+
   @Column({ name: 'created_at', type: 'timestamp' })
   createdAt: Date;
 
