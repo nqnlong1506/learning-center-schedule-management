@@ -90,6 +90,7 @@ export class BuyService {
           DE_ADDR: data?.deAddr,
           DE_ADDR_DETAIL: data?.deAddrDetail,
           DE_DAT: data?.deDat,
+          DE_METH: '',
           RE_NM: data?.reNm,
           RE_AC: data?.reAc,
           RE_BA: data?.reBa,
