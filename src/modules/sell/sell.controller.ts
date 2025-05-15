@@ -107,7 +107,7 @@ export class SellController {
     return res.json(response);
   }
 
-  @Put('update-status/:id')
+  @Put('update-status')
   async updateState(@Body() body: UpdateStateSellDTO, @Res() res: Response) {
     try {
       await this.sellService.updateState(body);
