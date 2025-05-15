@@ -53,8 +53,8 @@ export class HP_CT_001_STOCK_Dto {
   @Transform(({ value }) => transformDate(value))
   DE_DAT: string;
 
-  // @IsString()
-  // DE_ME: string;
+  @IsString()
+  DE_METH: string;
 
   @IsString()
   RE_NM: string;

@@ -16,6 +16,48 @@ export class SellService {
     private readonly sender: SubVSolSenderService,
   ) {}
 
+  async gets(query: {
+    orderBy: string;
+    orderDirection: 'ASC' | 'DESC';
+    page: number;
+    pageSize: number;
+    whereCondition: Record<string, any>;
+    customer: any;
+  }): Promise<any> {
+    try {
+      const {
+        page,
+        pageSize,
+        orderBy,
+        orderDirection,
+        whereCondition,
+        customer,
+      } = query;
+      console.log('whereCondition', whereCondition);
+      const numberPage = pageSize;
+      const queryBuilder = this.sRepo.createQueryBuilder('sells');
+      queryBuilder.andWhere('sells.sellerNo = :sellerNo', {
+        sellerNo: customer.no,
+      });
+      if (orderBy) {
+        queryBuilder.orderBy(`sells.${orderBy}`, orderDirection || 'ASC');
+      }
+      queryBuilder.take(numberPage).skip((page - 1) * numberPage);
+      const [data, totalCount] = await queryBuilder.getManyAndCount();
+      const totalPages = Math.ceil(totalCount / pageSize);
+      return {
+        data,
+        attrs: {
+          totalCount,
+          totalPages,
+          currentPage: Number(page),
+        },
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async getById(id: number): Promise<SellEntity | Error> {
     const sell = await this.sRepo.getItem({ where: { id: id } });
     if (!sell) return new Error('sell does not exist');

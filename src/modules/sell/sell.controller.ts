@@ -5,6 +5,7 @@ import {
   HttpStatus,
   Post,
   Put,
+  Query,
   Req,
   Res,
 } from '@nestjs/common';
@@ -19,6 +20,40 @@ import { UpdateStateSellDTO } from './dto/update-state-sell.dto';
 @Controller('sell')
 export class SellController {
   constructor(private readonly sellService: SellService) {}
+
+  @Get('list')
+  async listGet(
+    @Query() query: Record<string, any>,
+    @CurrentCustomer() customer: any,
+    @Res() res: Response,
+  ) {
+    try {
+      const {
+        orderBy = 'id',
+        orderDirection = 'DESC',
+        page = 1,
+        // pageSize = 3,
+        ...whereCondition
+      } = query;
+      const pageSize = 3;
+      const buy = await this.sellService.gets({
+        whereCondition,
+        orderBy,
+        orderDirection: orderDirection.toUpperCase(),
+        page,
+        pageSize,
+        customer,
+      });
+      return res.status(HttpStatus.OK).json({ success: true, ...buy });
+    } catch (error) {
+      if (!res.headersSent) {
+        return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
+          message: error.message,
+          success: false,
+        });
+      }
+    }
+  }
 
   @Get('view/:id')
   async get(@Req() req: Request, @Res() res: Response) {
