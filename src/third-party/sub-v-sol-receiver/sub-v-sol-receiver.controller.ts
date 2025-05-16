@@ -4,6 +4,10 @@ import { Response } from 'express';
 import { SubVSolReceiverService } from './sub-v-sol-receiver.service';
 import { ThirdAPIResponse } from 'src/config/api';
 import { SellDTO } from './dto/sell';
+import {
+  AuctionContractStatusEnum,
+  ContractStatusMapping,
+} from 'src/modules/auction-contract/config';
 
 @Controller('sub-v-sol-receiver')
 export class SubVSolReceiverController {
@@ -147,6 +151,82 @@ export class SubVSolReceiverController {
       };
       return res.json(response);
     }
+    const response: ThirdAPIResponse = {
+      IF_RST_CD: '00',
+      IF_RST_MSG: 'SUCCESS',
+    };
+    return res.json(response);
+  }
+
+  @Post('au_ex_ct_001')
+  async AU_EX_ST_001(@Body() body: any, @Res() res: Response) {
+    const { vin, id, price, saleCode } = body;
+    if (!id || id === '') {
+      const response: ThirdAPIResponse = {
+        IF_RST_CD: '99',
+        IF_RST_MSG: 'FAILED',
+      };
+      return res.json(response);
+    }
+    if (!Number(price)) {
+      const response: ThirdAPIResponse = {
+        IF_RST_CD: '99',
+        IF_RST_MSG: 'FAILED',
+      };
+      return res.json(response);
+    }
+    if (!vin || vin === '') {
+      const response: ThirdAPIResponse = {
+        IF_RST_CD: '99',
+        IF_RST_MSG: 'FAILED',
+      };
+      return res.json(response);
+    }
+    const st001 = await this.rcvService.AU_EX_CT_001(
+      vin,
+      id,
+      Number(price),
+      saleCode,
+    );
+    if (st001 instanceof Error) {
+      const response: ThirdAPIResponse = {
+        IF_RST_CD: '99',
+        IF_RST_MSG: 'FAILED',
+        message: st001.message,
+      };
+      return res.json(response);
+    }
+    console.log('success');
+    const response: ThirdAPIResponse = {
+      IF_RST_CD: '00',
+      IF_RST_MSG: 'SUCCESS',
+    };
+    return res.json(response);
+  }
+
+  @Post('au_ex_ct_002')
+  async AU_EX_ST_002(@Body() body: any, @Res() res: Response) {
+    const { saleCode, state } = body;
+    if (!saleCode || saleCode === '') {
+      const response: ThirdAPIResponse = {
+        IF_RST_CD: '99',
+        IF_RST_MSG: 'FAILED',
+      };
+      return res.json(response);
+    }
+    const st001 = await this.rcvService.AU_EX_CT_002(
+      saleCode,
+      ContractStatusMapping[state] || AuctionContractStatusEnum.IN_PROGRESS,
+    );
+    if (st001 instanceof Error) {
+      const response: ThirdAPIResponse = {
+        IF_RST_CD: '99',
+        IF_RST_MSG: 'FAILED',
+        message: st001.message,
+      };
+      return res.json(response);
+    }
+    console.log('success');
     const response: ThirdAPIResponse = {
       IF_RST_CD: '00',
       IF_RST_MSG: 'SUCCESS',

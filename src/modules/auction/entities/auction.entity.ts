@@ -3,12 +3,14 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { AuctionStatusEnum } from '../config';
 import { IsNumber, IsString } from 'class-validator';
 import { CustomerEntity } from 'src/modules/customer/entities/customer.entity';
 import { StockEntity } from 'src/modules/stock/entities/stock.entity';
+import { AuctionContractEntity } from 'src/modules/auction-contract/entites/auction-contract.entity';
 
 @Entity('auction')
 export class AuctionEntity {
@@ -45,4 +47,7 @@ export class AuctionEntity {
   @IsNumber()
   @Column({ type: 'int' })
   price: number;
+
+  @OneToOne(() => AuctionContractEntity, (auction) => auction.auctionNo)
+  contract: AuctionContractEntity;
 }

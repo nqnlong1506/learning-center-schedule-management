@@ -22,15 +22,22 @@ export class AuctionService {
     const key = await this.auctionRepo.startTransaction();
     try {
       const product = await this.stockRepo.getItem({
-        where: { VIN: auction.vin },
+        where: { VIN: auction.vin, isDel: false },
       });
       if (!product) throw new Error('product not found');
       const customer = await this.customerRepo.getItem({
         where: { no: customerNo },
       });
       if (!customer) throw new Error('customer not found');
+      const exist = await this.auctionRepo.exists({
+        where: {
+          stockId: product.id,
+          vendorNo: customer.no,
+          status: AuctionStatusEnum.WAITING,
+        },
+      });
+      if (exist) throw new Error('already bid on this item');
 
-      console.log('customer', customer);
       const entity = new AuctionEntity();
       entity.vin = product.VIN;
       entity.stockId = product.id;

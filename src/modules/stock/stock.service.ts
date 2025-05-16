@@ -246,7 +246,7 @@ export class StockService {
             status: status,
           },
         },
-        relations: { auctions: true },
+        relations: { auctions: { contract: true } },
       });
       return results;
     } catch (error) {

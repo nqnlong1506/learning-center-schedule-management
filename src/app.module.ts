@@ -5,9 +5,10 @@ import { ThirdModules } from './config/third-modules';
 import { TimeoutMiddleware } from './middlewares/timeout.middleware';
 import { AppMiddleware } from './middlewares/app.middleware';
 import { AuthMiddleware } from './middlewares/auth.middleware';
+import { AuctionContractModule } from './modules/auction-contract/auction-contract.module';
 
 @Module({
-  imports: [MysqlModule, ...AppModules, ...ThirdModules],
+  imports: [MysqlModule, ...AppModules, ...ThirdModules, AuctionContractModule],
   providers: [],
 })
 export class AppModule {

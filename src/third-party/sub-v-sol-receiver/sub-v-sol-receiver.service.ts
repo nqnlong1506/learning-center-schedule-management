@@ -7,6 +7,12 @@ import { SellRepository } from 'src/modules/sell/repositories/sell.repository';
 import { SellEntity } from 'src/modules/sell/entities/sell.entity';
 import { CustomerStageEnum } from 'src/modules/customer/enums';
 import { VendorEntity } from 'src/modules/vendor/entities/vendor.entity';
+import { AuctionRepository } from 'src/modules/auction/repositories/auction.repository';
+import { AuctionStatusEnum } from 'src/modules/auction/config';
+import { StockRepository } from 'src/modules/stock/repositories/stock.repository';
+import { AuctionContractStatusEnum } from 'src/modules/auction-contract/config';
+import { AuctionContractEntity } from 'src/modules/auction-contract/entites/auction-contract.entity';
+import { AuctionContractRepository } from 'src/modules/auction-contract/repositories/auction-contract.repository';
 // import { passwordCrypt } from 'src/utils/password';
 
 @Injectable()
@@ -14,6 +20,9 @@ export class SubVSolReceiverService {
   constructor(
     private readonly cRepo: CustomerRepository,
     private readonly sRepo: SellRepository,
+    private readonly stockRepo: StockRepository,
+    private readonly aRepo: AuctionRepository,
+    private readonly acRepo: AuctionContractRepository,
   ) {}
 
   async HP_CUST_001(body: CustomerDTO): Promise<CustomerEntity | Error> {
@@ -123,6 +132,62 @@ export class SubVSolReceiverService {
     try {
       console.log('[AU_AUCT_002 - receiver]', body);
     } catch (error) {
+      return error;
+    }
+  }
+
+  async AU_EX_CT_001(
+    vin: string,
+    id: string,
+    price: number,
+    saleCode: string,
+  ): Promise<void | Error> {
+    const key = await this.aRepo.startTransaction();
+    try {
+      console.log('checking here', vin, id, price, saleCode);
+      const product = await this.stockRepo.getItem({ where: { VIN: vin } });
+      if (!product) throw new Error('product not found');
+      const vendor = await this.cRepo.getItem({ where: { id: id } });
+      if (!vendor) throw new Error('vendor not found');
+      const auction = await this.aRepo.getItem({
+        where: {
+          stockId: product.id,
+          price: price,
+          vendorNo: vendor.no,
+        },
+      });
+      if (!auction) throw new Error('auction not found');
+      await this.aRepo.updateEntities(
+        { vin: vin },
+        { status: AuctionStatusEnum.FAILED },
+        key,
+      );
+      auction.status = AuctionStatusEnum.SUCCESS;
+      const update = await this.aRepo.createEntity(auction, key);
+      const contract = new AuctionContractEntity();
+      contract.auctionNo = update.no;
+      contract.code = saleCode;
+      contract.status = AuctionContractStatusEnum.IN_PROGRESS;
+      await this.acRepo.createEntity(contract, key);
+      await this.aRepo.commitTransaction(key);
+    } catch (error) {
+      console.log('error', error);
+      await this.aRepo.rollbackTransaction(key);
+      return error;
+    }
+  }
+
+  async AU_EX_CT_002(
+    saleCode: string,
+    state: AuctionContractStatusEnum,
+  ): Promise<void | Error> {
+    try {
+      console.log('checking here', saleCode, state);
+      const contract = await this.acRepo.getItem({ where: { code: saleCode } });
+      contract.status = state;
+      await this.acRepo.createEntity(contract);
+    } catch (error) {
+      console.log('error', error);
       return error;
     }
   }
