@@ -169,7 +169,12 @@ export class SubVSolSenderService {
 
   async AU_AUCT_001(auction: AuctionEntity): Promise<void | Error> {
     try {
-      const body = auction;
+      const body = {
+        customerId: auction.vendor.id,
+        vin: auction.vin,
+        price: auction.price,
+        stage: auction.vendor.stage,
+      };
       const { status, data } = await firstValueFrom(
         this.httpService
           .post(`${this.V_SOL_URL}/au_auct_001`, body, {
