@@ -35,10 +35,10 @@ export class VSolReceiverService {
         await this.stockRepository.createEntity(STOCK, key);
       }
       //call autobegins
-      await this.createAutobegins(STOCK.CAR_REG_NO, STOCK.OWNER, key);
+      // await this.createAutobegins(STOCK.CAR_REG_NO, STOCK.OWNER, key);
 
       //call carhistory
-      await this.createCarHistory(STOCK.CAR_REG_NO, key);
+      // await this.createCarHistory(STOCK.CAR_REG_NO, key);
 
       if (!keyTrans) await this.stockRepository.commitTransaction(key);
     } catch (error) {

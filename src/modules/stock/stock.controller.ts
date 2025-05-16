@@ -2,7 +2,7 @@ import { Controller, Get, HttpStatus, Param, Query, Res } from '@nestjs/common';
 import { StockService } from './stock.service';
 import { Response } from 'express';
 import { CurrentCustomer } from 'src/decorators/current-customer.decorator';
-import { AuctionStatusEnum } from '../auction/config';
+import { AuctionStatusEnumMapping } from '../auction/config';
 
 @Controller('stock')
 export class StockController {
@@ -75,17 +75,13 @@ export class StockController {
       if (!query?.status)
         return res.status(HttpStatus.NOT_FOUND).json({
           success: false,
-          message: 'Stock not found',
+          message: 'status not found',
         });
-
-      let stat;
-      if (query?.status === 'failed') stat = AuctionStatusEnum.FAILED;
-      if (query?.status === 'waiting') stat = AuctionStatusEnum.WAITING;
-      if (query?.status === 'success') stat = AuctionStatusEnum.SUCCESS;
 
       const list = await this.stockServices.myStocks(
         Number(customer['no']),
-        stat,
+        AuctionStatusEnumMapping[query?.status] ||
+          AuctionStatusEnumMapping['waiting'],
       );
 
       if (!list) {
@@ -108,9 +104,16 @@ export class StockController {
   }
 
   @Get('view-stock/:id')
-  async getView(@Param() param: { id: number }, @Res() res: Response) {
+  async getView(
+    @CurrentCustomer() customer: any,
+    @Param() param: { id: number },
+    @Res() res: Response,
+  ) {
     try {
-      const stock = await this.stockServices.getView(Number(param.id));
+      const stock = await this.stockServices.getView(
+        Number(param.id),
+        Number(customer['no']),
+      );
 
       if (!stock) {
         return res.status(HttpStatus.NOT_FOUND).json({

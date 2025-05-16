@@ -13,6 +13,7 @@ import { StockRepository } from 'src/modules/stock/repositories/stock.repository
 import { AuctionContractStatusEnum } from 'src/modules/auction-contract/config';
 import { AuctionContractEntity } from 'src/modules/auction-contract/entites/auction-contract.entity';
 import { AuctionContractRepository } from 'src/modules/auction-contract/repositories/auction-contract.repository';
+import { passwordCrypt } from 'src/utils/password';
 // import { passwordCrypt } from 'src/utils/password';
 
 @Injectable()
@@ -33,7 +34,7 @@ export class SubVSolReceiverService {
       if (!customer) throw new Error('customer does not exist.');
 
       customer.id = body.customerID;
-      customer.password = body.customerPW;
+      customer.password = passwordCrypt(body.customerPW);
       customer.stage = body.stage;
       customer.type = body.type;
       customer.name = body.name;
@@ -181,13 +182,29 @@ export class SubVSolReceiverService {
     saleCode: string,
     state: AuctionContractStatusEnum,
   ): Promise<void | Error> {
+    const key = await this.acRepo.startTransaction();
     try {
       console.log('checking here', saleCode, state);
       const contract = await this.acRepo.getItem({ where: { code: saleCode } });
       contract.status = state;
-      await this.acRepo.createEntity(contract);
+      if (state === AuctionContractStatusEnum.SUCCESS) {
+        const auction = await this.aRepo.getItem({
+          where: { no: contract.auctionNo },
+        });
+        if (auction) {
+          auction.status = AuctionStatusEnum.CONTRACT_SUCCESS;
+          await this.aRepo.createEntity(auction, key);
+        }
+        contract.successAt = new Date();
+      }
+      if (state === AuctionContractStatusEnum.FAILED) {
+        contract.failedAt = new Date();
+      }
+      await this.acRepo.createEntity(contract, key);
+      await this.aRepo.commitTransaction(key);
     } catch (error) {
       console.log('error', error);
+      await this.acRepo.rollbackTransaction(key);
       return error;
     }
   }

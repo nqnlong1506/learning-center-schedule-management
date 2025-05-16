@@ -19,7 +19,7 @@ export class AuctionContractEntity {
   @Column({ name: 'auction_no', type: 'int' })
   auctionNo: number;
 
-  @OneToOne(() => AuctionEntity, (auction) => auction.no)
+  @OneToOne(() => AuctionEntity, (auction) => auction.contract)
   @JoinColumn({ name: 'auction_no' })
   auction: AuctionEntity;
 

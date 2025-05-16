@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { StockRepository } from './repositories/stock.repository';
 import { CarFeatEnum, CarSummary } from 'src/config/enums/car';
-import { Brackets } from 'typeorm';
+import { Brackets, FindOptionsRelations } from 'typeorm';
 import { AuctionRepository } from '../auction/repositories/auction.repository';
 import { AuctionStatusEnum } from '../auction/config';
+import { StockEntity } from './entities/stock.entity';
 
 @Injectable()
 export class StockService {
@@ -239,6 +240,16 @@ export class StockService {
     status: AuctionStatusEnum,
   ): Promise<any | Error> {
     try {
+      const relation: FindOptionsRelations<StockEntity> =
+        status !== AuctionStatusEnum.CONTRACT_SUCCESS
+          ? {
+              auctions: true,
+            }
+          : {
+              auctions: {
+                contract: true,
+              },
+            };
       const results = await this.stockRepository.getItemsWithoutPagination({
         where: {
           auctions: {
@@ -246,7 +257,7 @@ export class StockService {
             status: status,
           },
         },
-        relations: { auctions: { contract: true } },
+        relations: relation,
       });
       return results;
     } catch (error) {
@@ -255,11 +266,14 @@ export class StockService {
     }
   }
 
-  async getView(id: number): Promise<any | Error> {
+  async getView(id: number, customerNo: number): Promise<any | Error> {
     try {
       const stock = await this.stockRepository.getItem({
         where: {
           id: id,
+          auctions: {
+            vendorNo: customerNo,
+          },
         },
         relations: {
           auctions: true,
