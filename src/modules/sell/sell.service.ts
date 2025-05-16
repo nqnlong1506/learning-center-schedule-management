@@ -34,6 +34,7 @@ export class SellService {
         customer,
       } = query;
       console.log('whereCondition', whereCondition);
+      console.log('customer no', customer.no);
       const numberPage = pageSize;
       const queryBuilder = this.sRepo.createQueryBuilder('sells');
       queryBuilder.andWhere('sells.sellerNo = :sellerNo', {
@@ -104,14 +105,21 @@ export class SellService {
       let update: any;
 
       if (
-        status == SellStatusEnum.REGISTERED &&
-        sell.status == SellStatusEnum.ESTIMATE_QUOTE
+        status == SellStatusEnum.ESTIMATE_QUOTE && //=2
+        sell.status == SellStatusEnum.REGISTERED //=1
       ) {
         update = await this.sRepo.updateEntity({ id }, { status }, key);
       }
 
       if (
-        status == SellStatusEnum.COMPLETE &&
+        status == SellStatusEnum.INSPECTION && //=2
+        sell.status == SellStatusEnum.ESTIMATE_QUOTE //=1
+      ) {
+        update = await this.sRepo.updateEntity({ id }, { status }, key);
+        console.log('di vao if 3');
+      }
+      if (
+        status == SellStatusEnum.COMPLETE && // =05
         sell.status == SellStatusEnum.FINAL_ESTIMATE
       ) {
         update = await this.sRepo.updateEntity({ id }, { status }, key);
