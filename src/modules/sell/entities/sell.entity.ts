@@ -143,6 +143,12 @@ export class SellEntity {
   mileage: number;
 
   @Column({
+    name: 'is_disable',
+    type: 'boolean',
+  })
+  isDisabled: boolean;
+
+  @Column({
     name: 'fuel',
     type: 'varchar',
     length: 50,

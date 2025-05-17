@@ -99,31 +99,39 @@ export class SellService {
   async updateState(data: UpdateStateSellDTO): Promise<SellEntity | Error> {
     const key = await this.sRepo.startTransaction();
     try {
-      const { id, status } = data;
+      const { id, status, isDisabled } = data;
       const sell = await this.sRepo.findOne({ where: { id: Equal(id) } });
       if (!sell) return new Error('sell doest not exist');
       let update: any;
 
-      if (
-        status == SellStatusEnum.ESTIMATE_QUOTE && //=2
-        sell.status == SellStatusEnum.REGISTERED //=1
-      ) {
-        update = await this.sRepo.updateEntity({ id }, { status }, key);
-      }
+      if (isDisabled) {
+        await this.sRepo.updateEntity(
+          { id: data.id },
+          { isDisabled: true },
+          key,
+        );
+      } else {
+        if (
+          status == SellStatusEnum.ESTIMATE_QUOTE && //=2
+          sell.status == SellStatusEnum.REGISTERED //=1
+        ) {
+          update = await this.sRepo.updateEntity({ id }, { status }, key);
+        }
 
-      if (
-        status == SellStatusEnum.INSPECTION && //=2
-        sell.status == SellStatusEnum.ESTIMATE_QUOTE //=1
-      ) {
-        update = await this.sRepo.updateEntity({ id }, { status }, key);
-        console.log('di vao if 3');
-      }
-      if (
-        status == SellStatusEnum.COMPLETE && // =05
-        sell.status == SellStatusEnum.FINAL_ESTIMATE
-      ) {
-        update = await this.sRepo.updateEntity({ id }, { status }, key);
-        await this.sender.HP_CT_003(update);
+        if (
+          status == SellStatusEnum.INSPECTION && //=2
+          sell.status == SellStatusEnum.ESTIMATE_QUOTE //=1
+        ) {
+          update = await this.sRepo.updateEntity({ id }, { status }, key);
+          console.log('di vao if 3');
+        }
+        if (
+          status == SellStatusEnum.COMPLETE && // =05
+          sell.status == SellStatusEnum.FINAL_ESTIMATE
+        ) {
+          update = await this.sRepo.updateEntity({ id }, { status }, key);
+          await this.sender.HP_CT_003(update);
+        }
       }
 
       await this.sRepo.commitTransaction(key);

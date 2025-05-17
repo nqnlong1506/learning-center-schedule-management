@@ -14,3 +14,8 @@ export enum SellPEEnum {
   WITHIN_30_DAYS = '04',
   AFTER_30_DAYS = '05',
 }
+
+export enum IsDisable {
+  YES = 'Y',
+  NO = 'N',
+}
